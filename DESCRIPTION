@@ -1,0 +1,14 @@
+Package: mixdir
+Type: Package
+Title: Dimensionality Reduction for Categorical Data
+Version: 0.1.0
+Authors@R: person("Constantin", "Ahlmann-Eltze", email = "artjom31415@googlemail.com", role = c("aut", "cre"))
+Description: The package implements a hierarchical Dirichlet mixture of Dirichlet distributions.
+    It can be used to reduce the dimensionality of hierarchical data, cluster individuals or decompose 
+    probability tensors. The model is based on a paper by Dunson and Xing (2009), but instead of a Dirichlet 
+    Process mixture of Dirichlet distributions a finite dimensional approximation is made.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Suggests: testthat
+RoxygenNote: 6.0.1
