@@ -4,12 +4,24 @@
 \alias{mixdir}
 \title{Run mixture of Dirichlet model}
 \usage{
-mixdir(X, latent = 3, max_iter = 100, method = c("vi", "em", "mcmc"))
+mixdir(X, latent = 3, alpha = NULL, beta = NULL, max_iter = 100,
+  method = c("vi", "em", "mcmc"))
 }
 \arguments{
 \item{X}{A matrix of size (N_ind x N_quest) that contains the categorical responses.}
 
 \item{latent}{The number of latent factors that are used to approximate the model.}
+
+\item{alpha}{A vector of length latent. If it is NULL alpha is initialized to rep(1, times=latent).
+It serves as prior for the Dirichlet distributions over the latent groups. Large numbers
+favor an equal distributions of individuals to groups and small number favor putting most individuals
+in one latent group.}
+
+\item{beta}{A vector of length latent. If it is NULL alpha is initialized to rep(0.1, times=N_cat), where
+N_cat is the number of different categories in X.
+It serves as a prior for the Dirichlet distributions over the categorical responses. Large numbers
+favor an equal distribution of responses for a question of the individuals in the same latent group,
+small numbers indicate that indiviudals of the same latent group usually answer a question the same way.}
 
 \item{max_iter}{The maximum number of iterations.}
 
