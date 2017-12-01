@@ -39,7 +39,7 @@ mixdir <- function(X,
   if(method == "vi"){
     mixdir_vi(X, n_latent, alpha, beta, n_cat, max_iter, epsilon, ...)
   }else if(method == "em"){
-    stop("Method EM is not yet implemented")
+    mixdir_em(X, n_latent, alpha, beta, n_cat, max_iter, epsilon, ...)
   }else if(method == "mcmc"){
     stop("Method MCMC is not yet implemented")
   }else{

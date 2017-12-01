@@ -70,7 +70,7 @@ test_that("VI works for simple models", {
 
 context("Expectation Maximization")
 
-test_that("VI works for simple models", {
+test_that("EN works for simple models", {
   X <- create_data()
   set.seed(1)
   result <- mixdir(X, method="em")
