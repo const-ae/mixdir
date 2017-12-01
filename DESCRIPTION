@@ -10,5 +10,7 @@ Description: The package implements a hierarchical Dirichlet mixture of Dirichle
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Suggests: testthat
+Suggests: testthat, tibble, purrr
 RoxygenNote: 6.0.1
+Imports: extraDistr,
+    stats

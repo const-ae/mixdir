@@ -29,6 +29,9 @@ small numbers indicate that indiviudals of the same latent group usually answer 
 expectation maximization ("em") or Gibbs Sampling ("mcmc").}
 
 \item{epsilon}{A number that indicates the numerical precision necessary to consider the algorithm converged.}
+
+\item{...}{Additional parameters passed on to the underlying functions. The parameters are verbose, phi_init,
+zeta_init.}
 }
 \description{
 Run mixture of Dirichlet model

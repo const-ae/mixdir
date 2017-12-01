@@ -18,6 +18,8 @@
 #' @param method The method that is used to fit the model, can either be variational inference ("vi"),
 #'   expectation maximization ("em") or Gibbs Sampling ("mcmc").
 #' @param epsilon A number that indicates the numerical precision necessary to consider the algorithm converged.
+#' @param ... Additional parameters passed on to the underlying functions. The parameters are verbose, phi_init,
+#'   zeta_init.
 #' @export
 mixdir <- function(X,
                    n_latent=3,

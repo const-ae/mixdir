@@ -15,9 +15,9 @@ mixdir_mcmc <-  function(X, n_latent, alpha_a, alpha_b, beta, n_cat, max_iter, e
   pi_true <- pi_true/n_ind
 
 
-  alpha <- rgamma(1, shape=1, rate=1)
+  alpha <- stats::rgamma(1, shape=1, rate=1)
   draw_latent_class <- function(n, alpha=1, max_class=1e3){
-    V <- rbeta(max_class, 1, alpha)
+    V <- stats::rbeta(max_class, 1, alpha)
     w <- c(V[1], rep(NA,max_class-1))
     w[2:max_class] <- sapply(2:max_class, function(i) V[i] * prod(1 - V[1:(i-1)]))
     list(class=factor(sample(1:max_class, n, prob=w, replace=TRUE), levels=1:max_class, ordered = TRUE),
@@ -40,7 +40,7 @@ mixdir_mcmc <-  function(X, n_latent, alpha_a, alpha_b, beta, n_cat, max_iter, e
   while(iter <= max_iter){
 
     # Update u_i ~ runif(0, nu_zi)
-    u <- runif(n_ind, 0, weights[class])
+    u <- stats::runif(n_ind, 0, weights[class])
 
     # Update psi_jh
     k <- as.numeric(max(class))
@@ -82,8 +82,8 @@ mixdir_mcmc <-  function(X, n_latent, alpha_a, alpha_b, beta, n_cat, max_iter, e
                     lower_bound, "), iter ", iter))
       }
       # Trick to sample from truncated beta
-      support <- ppoints(100) * (upper_bound-lower_bound) + lower_bound
-      V[h] <- sample(support, 1, prob=dbeta(support, 1, alpha))
+      support <- stats::ppoints(100) * (upper_bound-lower_bound) + lower_bound
+      V[h] <- sample(support, 1, prob=stats::dbeta(support, 1, alpha))
     }
 
     # Update weights
@@ -112,11 +112,14 @@ mixdir_mcmc <-  function(X, n_latent, alpha_a, alpha_b, beta, n_cat, max_iter, e
     k <- as.numeric(max(class))
 
     # Update alpha ~ gamma
-    alpha <- rgamma(1, shape=alpha_a + k,
+    alpha <- stats::rgamma(1, shape=alpha_a + k,
                     rate=alpha_b - sum(log(1-V[1:k])))
 
     pi_est <- array(0, sapply(1:n_quest, function(j)nrow(psi[[j]])))
-    for(i in purrr::cross_n(lapply(1:n_quest, function(r) seq(from=1, to=3)))){
+    indices <- expand.grid(lapply(1:n_quest, function(r) seq(from=1, to=n_cat)))
+    indices <- lapply(1:nrow(indices), function(i)as.list(indices[i, ]))
+    # indices <- purrr::cross_n(lapply(1:n_quest, function(r) seq(from=1, to=3)))
+    for(i in indices){
       pi_est[matrix(unlist(i), nrow=1)] <- sum(sapply(1:k, function(h) weights[h] *
                                                         prod(sapply(1:n_quest, function(j) psi[[j]][i[[j]], h]))))
     }
