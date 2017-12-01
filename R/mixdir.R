@@ -39,9 +39,12 @@ mixdir <- function(X,
   if(method == "vi"){
     mixdir_vi(X, n_latent, alpha, beta, n_cat, max_iter, epsilon, ...)
   }else if(method == "em"){
-    mixdir_em(X, n_latent, alpha, beta, n_cat, max_iter, epsilon, ...)
+    if(any(alpha != 1)) warning("The EM algorithm cannot handle custom alpha parameters.")
+    mixdir_em(X, n_latent, beta, n_cat, max_iter, epsilon, ...)
   }else if(method == "mcmc"){
-    stop("Method MCMC is not yet implemented")
+    if(epsilon != 1e-3) warning("The MCMC algorithm is always run for the full number of iterations and thus ignore epsilon.")
+    if(n_latent != 3) warning("The MCMC algorithm automatically infers the best number of latent variables, thus n_latent is ignored.")
+    mixdir_mcmc(X, n_latent, alpha_a=alpha[1], alpha_b=alpha[2], beta, n_cat, max_iter, ...)
   }else{
     stop(paste("Cannot deal with choice of method ", method, ". The only valid options are 'vi', 'em' or 'mcmc'"))
   }

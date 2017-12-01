@@ -4,13 +4,13 @@
 \alias{mixdir}
 \title{Run mixture of Dirichlet model}
 \usage{
-mixdir(X, latent = 3, alpha = NULL, beta = NULL, max_iter = 100,
-  method = c("vi", "em", "mcmc"))
+mixdir(X, n_latent = 3, alpha = NULL, beta = NULL, max_iter = 100,
+  method = c("vi", "em", "mcmc"), epsilon = 0.001, ...)
 }
 \arguments{
 \item{X}{A matrix of size (N_ind x N_quest) that contains the categorical responses.}
 
-\item{latent}{The number of latent factors that are used to approximate the model.}
+\item{n_latent}{The number of latent factors that are used to approximate the model.}
 
 \item{alpha}{A vector of length latent. If it is NULL alpha is initialized to rep(1, times=latent).
 It serves as prior for the Dirichlet distributions over the latent groups. Large numbers
@@ -27,6 +27,8 @@ small numbers indicate that indiviudals of the same latent group usually answer 
 
 \item{method}{The method that is used to fit the model, can either be variational inference ("vi"),
 expectation maximization ("em") or Gibbs Sampling ("mcmc").}
+
+\item{epsilon}{A number that indicates the numerical precision necessary to consider the algorithm converged.}
 }
 \description{
 Run mixture of Dirichlet model

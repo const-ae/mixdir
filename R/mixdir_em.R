@@ -1,4 +1,4 @@
-mixdir_em <- function(X, n_latent, alpha, beta, n_cat, max_iter, epsilon,
+mixdir_em <- function(X, n_latent, beta, n_cat, max_iter, epsilon,
                       zeta_init=NULL, phi_init=NULL, verbose=FALSE){
   # Initialize the parameters
   n_ind <- nrow(X)
@@ -9,7 +9,7 @@ mixdir_em <- function(X, n_latent, alpha, beta, n_cat, max_iter, epsilon,
   if(is.null(phi_init)){
     phi_init <- array(1, dim=c(n_quest, n_latent, n_cat))
   }
-  lambda <- alpha/sum(alpha)
+  lambda <- rep(1, n_latent)
   z <- zeta_init
   phi <- phi_init
 
