@@ -11,7 +11,7 @@ mixdir_vi <- function(X, n_latent, alpha, beta, n_cat, max_iter, epsilon,
     zeta_init <- extraDistr::rdirichlet(n_ind, rep(1, n_latent))
   }
   if(is.null(phi_init)){
-    phi_init <- array(1, dim=c(n_quest, n_latent, n_cat))
+    phi_init <- array(sample(1:3, size=n_quest*n_latent*n_cat, replace=TRUE), dim=c(n_quest, n_latent, n_cat))
   }
   omega <-omega_init
   zeta <- zeta_init
