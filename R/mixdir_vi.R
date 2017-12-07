@@ -1,6 +1,10 @@
 
 mixdir_vi <- function(X, n_latent, alpha, beta, n_cat, max_iter, epsilon,
-                      omega_init=NULL, zeta_init=NULL, phi_init=NULL, verbose=FALSE){
+                      omega_init=NULL, zeta_init=NULL, phi_init=NULL, verbose=FALSE,
+                      na.handle=c("mar", "category")){
+
+  na.handle = match.arg(na.handle)
+  if(na.handle != "mar") stop("Can only handle missing values under mar assumption")
   # Initialize the parameters
   n_ind <- nrow(X)
   n_quest <- ncol(X)
@@ -29,8 +33,14 @@ mixdir_vi <- function(X, n_latent, alpha, beta, n_cat, max_iter, epsilon,
     # Update zeta
     for(k in 1:n_latent){
       zeta[, k] <- sapply(1:n_ind, function(i){
-        # exp(digamma(omega[k]) - digamma(sum(omega)) + sum(digamma(phi[,k, X[i, ]]) - rowSums(digamma(phi[,k, ]))) - 1)
-        exp(digamma(omega[k]) - digamma(sum(omega)) + sum(sapply(1:n_quest, function(j) digamma(phi[ j, k, X[i,j]]) - digamma(sum(phi[j, k, ])))) - 1)
+        exp(digamma(omega[k]) - digamma(sum(omega)) + sum(sapply(1:n_quest, function(j){
+          if(is.na(X[i,j])){
+            # If X_ij is missing replace it with sum over expected \E[X_ij == r] = phi[j,k,r]/sum(phi[j,k,])
+            sum(sapply(1:n_cat, function(r) phi[j,k,r]/sum(phi[j,k,]) * (digamma(phi[ j, k, r]) - digamma(sum(phi[j, k, ])))))
+          }else{
+            digamma(phi[ j, k, X[i,j]]) - digamma(sum(phi[j, k, ]))
+          }
+        })) - 1)
       })
     }
     zeta <- zeta / rowSums(zeta)
@@ -38,7 +48,7 @@ mixdir_vi <- function(X, n_latent, alpha, beta, n_cat, max_iter, epsilon,
     # Update phi
     for(j in 1:n_quest){
       for(r in 1:n_cat){
-        phi[j, ,r] <- colSums(zeta * (X[, j] == r)) + beta[r]
+        phi[j, ,r] <- colSums(zeta * (X[, j] == r), na.rm=TRUE) + beta[r]
       }
     }
 
@@ -100,7 +110,11 @@ expec_log_ujk <- function(phi_jk, beta){
 }
 
 expec_log_xij <- function(x_ij, phi_jk, zeta_ik){
-  zeta_ik * (digamma(phi_jk[x_ij]) - digamma(sum(phi_jk)))
+  if(is.na(x_ij)){
+    zeta_ik * sum(phi_jk/sum(phi_jk) * (digamma(phi_jk) - digamma(sum(phi_jk))))
+  }else{
+    zeta_ik * (digamma(phi_jk[x_ij]) - digamma(sum(phi_jk)))
+  }
 }
 
 entrop_omega <- function(omega){
