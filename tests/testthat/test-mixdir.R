@@ -1,8 +1,8 @@
 
 library(mixdir)
+
+
 context("Variational Inference")
-
-
 test_that("VI works for simple models", {
   X <- create_data()
   set.seed(1)
@@ -37,3 +37,23 @@ test_that("VI DP works for simple models", {
 })
 
 
+
+
+context("Prediction")
+
+test_that("prediction of class works", {
+
+  data("mushroom")
+  res <- mixdir(mushroom[1:30, ])
+
+  # Predict Class
+  expect_silent(predict_class(mushroom[40, ], res$lambda, res$category_prob))
+  expect_silent(predict_class(c(`gill-color`="black"), res$lambda, res$category_prob))
+  expect_warning(predict_class(mushroom[42, ], res$lambda, res$category_prob))
+
+  tmp <- mushroom
+  ind <- sapply(tmp, is.character)
+  tmp[ind] <- lapply(tmp[ind], factor)
+  res2 <- mixdir(tmp[1:30, ])
+  expect_silent(predict_class(mushroom[42, ], res2$lambda, res2$category_prob))
+})

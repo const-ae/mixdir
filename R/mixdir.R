@@ -33,13 +33,19 @@ mixdir <- function(X,
                    na.handle=c("ignore", "category"),
                    ...){
 
+
   na.handle <- match.arg(na.handle, c("ignore", "category"))
-  X <- as.matrix(X)
-  class(X) = "character"
   if(na.handle == "category"){
     X[is.na(X)] <- "NA"
   }
-  categories <- lapply(1:ncol(X), function(j)sort(unique(X[, j])))
+
+  categories <- lapply(1:ncol(X), function(j){
+    if(is.factor(X[,j ])) as.character(levels(X[,j ]))
+    else as.character(sort(unique(X[, j])))
+  })
+
+  X <- as.matrix(X)
+  class(X) = "character"
 
 
   if(! select_latent){
