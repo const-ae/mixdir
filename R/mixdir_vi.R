@@ -1,13 +1,29 @@
 
-mixdir_vi <- function(X, n_latent, alpha, beta, n_cat, max_iter, epsilon,
-                      omega_init=NULL, zeta_init=NULL, phi_init=NULL, verbose=FALSE,
-                      na.handle=c("mar", "category")){
+mixdir_vi <- function(X, n_latent, alpha, beta, categories, max_iter, epsilon,
+                      omega_init=NULL, zeta_init=NULL, phi_init=NULL, verbose=FALSE){
 
-  na.handle = match.arg(na.handle)
-  if(na.handle != "mar") stop("Can only handle missing values under mar assumption")
   # Initialize the parameters
   n_ind <- nrow(X)
   n_quest <- ncol(X)
+
+  if(is.null(alpha) || length(alpha) == 0){
+    alpha <- 1
+  }else if(length(alpha) == 1){
+    alpha <- alpha[1]
+  }else{
+    warning(paste0("alpha should only be a single value. Using alpha=alpha[1]=", alpha[1]))
+    alpha <- alpha[1]
+  }
+
+  if(is.null(beta) || length(beta) == 0){
+    beta <- 0.1
+  }else if(length(beta) == 1){
+    beta <- beta[1]
+  }else{
+    warning(paste0("beta should only be a single value. Using beta=beta[1]=", beta[1]))
+    beta <- beta[1]
+  }
+
   if(is.null(omega_init)){
     omega_init <- rep(1, n_latent)
   }
@@ -15,7 +31,11 @@ mixdir_vi <- function(X, n_latent, alpha, beta, n_cat, max_iter, epsilon,
     zeta_init <- extraDistr::rdirichlet(n_ind, rep(1, n_latent))
   }
   if(is.null(phi_init)){
-    phi_init <- array(sample(1:3, size=n_quest*n_latent*n_cat, replace=TRUE), dim=c(n_quest, n_latent, n_cat))
+    phi_init <- lapply(1:n_quest, function(j) lapply(1:n_latent, function(k) {
+      x <- sample(1:3, size=length(categories[[j]]), replace=TRUE)
+      names(x) <- categories[[j]]
+      x
+    }))
   }
   omega <-omega_init
   zeta <- zeta_init
@@ -35,10 +55,10 @@ mixdir_vi <- function(X, n_latent, alpha, beta, n_cat, max_iter, epsilon,
       zeta[, k] <- sapply(1:n_ind, function(i){
         exp(digamma(omega[k]) - digamma(sum(omega)) + sum(sapply(1:n_quest, function(j){
           if(is.na(X[i,j])){
-            # If X_ij is missing replace it with sum over expected \E[X_ij == r] = phi[j,k,r]/sum(phi[j,k,])
-            sum(sapply(1:n_cat, function(r) phi[j,k,r]/sum(phi[j,k,]) * (digamma(phi[ j, k, r]) - digamma(sum(phi[j, k, ])))))
+            # If X_ij is missing ignore it
+            0
           }else{
-            digamma(phi[ j, k, X[i,j]]) - digamma(sum(phi[j, k, ]))
+            digamma(phi[[j]][[k]][X[i,j]]) - digamma(sum(phi[[j]][[k]]))
           }
         })) - 1)
       })
@@ -47,19 +67,26 @@ mixdir_vi <- function(X, n_latent, alpha, beta, n_cat, max_iter, epsilon,
 
     # Update phi
     for(j in 1:n_quest){
-      for(r in 1:n_cat){
-        phi[j, ,r] <- colSums(zeta * (X[, j] == r), na.rm=TRUE) + beta[r]
+      for(k in 1:n_latent){
+        for(r in categories[[j]]){
+          phi[[j]][[k]][r] <- sum(zeta[ ,k] * (X[, j] == r), na.rm=TRUE) + beta
+        }
       }
     }
 
-    elbo <- expec_log_lambda(omega, alpha) +
+    elbo <- expec_log_lambda(omega, rep(alpha, length(omega))) +
       sum(sapply(1:n_ind, function(i)expec_log_zi(zeta[i, ], omega))) +
-      sum(sapply(1:n_quest, function(j) sum(sapply(1:n_latent, function(k) expec_log_ujk(phi[j, k, ], beta) )))) +
-      sum(sapply(1:n_ind, function(i) sum(sapply(1:n_quest, function(j) sum(sapply(1:n_latent, function(k) expec_log_xij(X[i,j], phi[j, k, ], zeta[i,k]) )))))) +
+      sum(sapply(1:n_quest, function(j) sum(sapply(1:n_latent, function(k) expec_log_ujk(phi[[j]][[k]], rep(beta, length(categories[[j]]))) )))) +
+      sum(sapply(1:n_ind, function(i) sum(sapply(1:n_quest, function(j) sum(sapply(1:n_latent, function(k)
+        expec_log_xij(X[i,j], phi[[j]][[k]], zeta[i,k]) )))))) +
       entrop_omega(omega) +
       sum(sapply(1:n_ind, function(i)entrop_zeta(zeta[i, ]))) +
-      sum(sapply(1:n_quest, function(j) sum(sapply(1:n_latent, function(k) entrop_phi(phi[j, k, ]) ))))
+      sum(sapply(1:n_quest, function(j) sum(sapply(1:n_latent, function(k) entrop_phi(phi[[j]][[k]]) ))))
 
+
+    if(iter != 1 && ! is.infinite(elbo) && elbo < elbo_hist[iter - 1])
+      warning("The ELBO decreased. This should not happen, it might be due to numerical instabilities or a bug in the code.
+              Please contact the maintainer to report this.\n")
     if(iter != 1 && ! is.infinite(elbo) && elbo - elbo_hist[iter - 1] < epsilon) converged <- TRUE
 
     if(verbose && iter %% 10 == 0) message(paste0("Iter: ", iter, " ELBO: ", formatC(elbo, digits=4)))
@@ -70,10 +97,15 @@ mixdir_vi <- function(X, n_latent, alpha, beta, n_cat, max_iter, epsilon,
 
   elbo_hist <- elbo_hist[! is.na(elbo_hist)]
 
-  U <- array(NA, dim=c(n_quest, n_latent, n_cat))
+  U <- lapply(1:n_quest, function(j) lapply(1:n_latent, function(k) {
+    x <- rep(NA, times=length(categories[[j]]))
+    names(x) <- categories[[j]]
+    x
+  }))
+  names(U) <- colnames(X)
   for(j in 1:n_quest){
     for(k in 1:n_latent){
-      U[j, k, ] <- phi[j,k, ] / sum(phi[j,k,])
+      U[[j]][[k]] <- (phi[[j]][[k]]+beta) / sum(phi[[j]][[k]] + beta)
     }
   }
 
@@ -81,14 +113,13 @@ mixdir_vi <- function(X, n_latent, alpha, beta, n_cat, max_iter, epsilon,
     converged=converged,
     convergence=elbo_hist,
     lambda=omega/sum(omega),
-    z=zeta,
-    U=U,
+    ind_class=zeta,
+    category_prob=U,
     specific_params=list(
       omega=omega,
       phi=phi
     )
   )
-
 }
 
 
@@ -111,7 +142,7 @@ expec_log_ujk <- function(phi_jk, beta){
 
 expec_log_xij <- function(x_ij, phi_jk, zeta_ik){
   if(is.na(x_ij)){
-    zeta_ik * sum(phi_jk/sum(phi_jk) * (digamma(phi_jk) - digamma(sum(phi_jk))))
+    1
   }else{
     zeta_ik * (digamma(phi_jk[x_ij]) - digamma(sum(phi_jk)))
   }

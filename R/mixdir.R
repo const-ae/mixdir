@@ -3,14 +3,12 @@
 
 #' Run mixture of Dirichlet model
 #'
-#' @param X A matrix of size (N_ind x N_quest) that contains the categorical responses.
+#' @param X A matrix or data.frame of size (N_ind x N_quest) that contains the categorical responses.
 #' @param n_latent The number of latent factors that are used to approximate the model.
-#' @param alpha A vector of length latent. If it is NULL alpha is initialized to rep(1, times=latent).
-#'   It serves as prior for the Dirichlet distributions over the latent groups. Large numbers
-#'   favor an equal distributions of individuals to groups and small number favor putting most individuals
-#'   in one latent group.
-#' @param beta A vector of length latent. If it is NULL alpha is initialized to rep(0.1, times=N_cat), where
-#'   N_cat is the number of different categories in X.
+#' @param alpha A single number or a vector of two numbers in case select_latent=TRUE. If it is NULL alpha
+#'   is initialized to 1. It serves as prior for the Dirichlet distributions over the latent groups. They
+#'   serve as pseudo counts of individuals per group.
+#' @param beta A single number. If it is NULL alpha is initialized to 0.1.
 #'   It serves as a prior for the Dirichlet distributions over the categorical responses. Large numbers
 #'   favor an equal distribution of responses for a question of the individuals in the same latent group,
 #'   small numbers indicate that indiviudals of the same latent group usually answer a question the same way.
@@ -18,11 +16,12 @@
 #'   Process prior is used that shrinkes the number of used latent variables appropriately (can be controlled
 #'   with alpha=c(a1, a2) and beta). Default: FALSE.
 #' @param max_iter The maximum number of iterations.
-#' @param method The method that is used to fit the model, can either be variational inference ("vi"), variational
-#'   inference with a dirichlet process prior ("vi_dp"), expectation maximization ("em") or Gibbs Sampling ("mcmc").
 #' @param epsilon A number that indicates the numerical precision necessary to consider the algorithm converged.
+#' @param na.handle Either "ignore" or "category". If it is "category" all NA's in the dataset are converted to
+#'   the string "NA" and treated as their own category. If it is "ignore" the NA's are treated as missing completely
+#'   at random and are ignored during the parameter updates.
 #' @param ... Additional parameters passed on to the underlying functions. The parameters are verbose, phi_init,
-#'   zeta_init.
+#'   zeta_init and if select_latent=FALSE omega_init or if select_latent=TRUE kappa1_init and kappa2_init.
 #' @export
 mixdir <- function(X,
                    n_latent=3,
@@ -30,38 +29,25 @@ mixdir <- function(X,
                    beta=NULL,
                    select_latent=FALSE,
                    max_iter=100,
-                   method=c("vi", "vi_dp", "em", "mcmc"),
                    epsilon=1e-3,
+                   na.handle=c("ignore", "category"),
                    ...){
-  method <- match.arg(method)
-  n_cat <- length(unique(c(X)))
-  if(is.null(alpha)){
-    alpha <- rep(1, n_latent)
-  }
-  if(is.null(beta)){
-    beta <- rep(0.01, n_cat)
-  }
 
-  if(select_latent){
-    if(method == "vi" || method == "vi_dp")
-      method <- "vi_dp"
-    else
-      stop("select_latent=TRUE can only be used in combination with method='vi' or method='vi_dp' ")
+  na.handle <- match.arg(na.handle, c("ignore", "category"))
+  X <- as.matrix(X)
+  class(X) = "character"
+  if(na.handle == "category"){
+    X[is.na(X)] <- "NA"
   }
+  categories <- lapply(1:ncol(X), function(j)sort(unique(X[, j])))
 
-  if(method == "vi"){
-    mixdir_vi(X, n_latent, alpha, beta, n_cat, max_iter, epsilon, ...)
-  }else if(method == "vi_dp"){
-    mixdir_vi_dp(X, n_latent, alpha, beta, n_cat, max_iter, epsilon, ...)
-  }else if(method == "em"){
-    if(any(alpha != 1)) warning("The EM algorithm cannot handle custom alpha parameters.")
-    mixdir_em(X, n_latent, beta, n_cat, max_iter, epsilon, ...)
-  }else if(method == "mcmc"){
-    if(epsilon != 1e-3) warning("The MCMC algorithm is always run for the full number of iterations and thus ignore epsilon.")
-    if(n_latent != 3) warning("The MCMC algorithm automatically infers the best number of latent variables, thus n_latent is ignored.")
-    mixdir_mcmc(X, n_latent, alpha_a=alpha[1], alpha_b=alpha[2], beta, n_cat, max_iter, ...)
+
+  if(! select_latent){
+    mixdir_vi(X=X, n_latent=n_latent, alpha=alpha, beta=beta,
+              categories=categories, max_iter=max_iter, epsilon=epsilon, ...)
   }else{
-    stop(paste("Cannot deal with choice of method ", method, ". The only valid options are 'vi', 'em' or 'mcmc'"))
+    mixdir_vi_dp(X=X, n_latent=n_latent, alpha=alpha, beta=beta,
+                 categories=categories, max_iter=max_iter, epsilon=epsilon, ...)
   }
 
 }

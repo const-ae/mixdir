@@ -4,34 +4,38 @@
 \alias{mixdir}
 \title{Run mixture of Dirichlet model}
 \usage{
-mixdir(X, n_latent = 3, alpha = NULL, beta = NULL, max_iter = 100,
-  method = c("vi", "em", "mcmc"), epsilon = 0.001, ...)
+mixdir(X, n_latent = 3, alpha = NULL, beta = NULL,
+  select_latent = FALSE, max_iter = 100, epsilon = 0.001,
+  na.handle = c("ignore", "category"), ...)
 }
 \arguments{
-\item{X}{A matrix of size (N_ind x N_quest) that contains the categorical responses.}
+\item{X}{A matrix or data.frame of size (N_ind x N_quest) that contains the categorical responses.}
 
 \item{n_latent}{The number of latent factors that are used to approximate the model.}
 
-\item{alpha}{A vector of length latent. If it is NULL alpha is initialized to rep(1, times=latent).
-It serves as prior for the Dirichlet distributions over the latent groups. Large numbers
-favor an equal distributions of individuals to groups and small number favor putting most individuals
-in one latent group.}
+\item{alpha}{A single number or a vector of two numbers in case select_latent=TRUE. If it is NULL alpha
+is initialized to 1. It serves as prior for the Dirichlet distributions over the latent groups. They
+serve as pseudo counts of individuals per group.}
 
-\item{beta}{A vector of length latent. If it is NULL alpha is initialized to rep(0.1, times=N_cat), where
-N_cat is the number of different categories in X.
+\item{beta}{A single number. If it is NULL alpha is initialized to 0.1.
 It serves as a prior for the Dirichlet distributions over the categorical responses. Large numbers
 favor an equal distribution of responses for a question of the individuals in the same latent group,
 small numbers indicate that indiviudals of the same latent group usually answer a question the same way.}
 
-\item{max_iter}{The maximum number of iterations.}
+\item{select_latent}{A boolean that indicates if the exact number n_latent should be used or if a Dirichlet
+Process prior is used that shrinkes the number of used latent variables appropriately (can be controlled
+with alpha=c(a1, a2) and beta). Default: FALSE.}
 
-\item{method}{The method that is used to fit the model, can either be variational inference ("vi"),
-expectation maximization ("em") or Gibbs Sampling ("mcmc").}
+\item{max_iter}{The maximum number of iterations.}
 
 \item{epsilon}{A number that indicates the numerical precision necessary to consider the algorithm converged.}
 
+\item{na.handle}{Either "ignore" or "category". If it is "category" all NA's in the dataset are converted to
+the string "NA" and treated as their own category. If it is "ignore" the NA's are treated as missing completely
+at random and are ignored during the parameter updates.}
+
 \item{...}{Additional parameters passed on to the underlying functions. The parameters are verbose, phi_init,
-zeta_init.}
+zeta_init and if select_latent=FALSE omega_init or if select_latent=TRUE kappa1_init and kappa2_init.}
 }
 \description{
 Run mixture of Dirichlet model
