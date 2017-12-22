@@ -30,8 +30,8 @@ with alpha=c(a1, a2) and beta). Default: FALSE.}
 
 \item{epsilon}{A number that indicates the numerical precision necessary to consider the algorithm converged.}
 
-\item{na.handle}{Either "ignore" or "category". If it is "category" all NA's in the dataset are converted to
-the string "NA" and treated as their own category. If it is "ignore" the NA's are treated as missing completely
+\item{na.handle}{Either "ignore" or "category". If it is "category" all \code{NA}'s in the dataset are converted to
+the string "NA" and treated as their own category. If it is "ignore" the \code{NA}'s are treated as missing completely
 at random and are ignored during the parameter updates.}
 
 \item{...}{Additional parameters passed on to the underlying functions. The parameters are verbose, phi_init,
@@ -39,4 +39,27 @@ zeta_init and if select_latent=FALSE omega_init or if select_latent=TRUE kappa1_
 }
 \description{
 Run mixture of Dirichlet model
+}
+\details{
+The function uses a mixture of multinomials to fit the model.
+  The full model specification is
+  \deqn{ \lambda | \alpha \sim DirichletProcess(\alpha)}{lambda | alpha ~ DirichletProcess(alpha)}
+  \deqn{ z_i | \lambda \sim Multinomial(\lambda)}{z_i | lambda ~ Multinomial(lambda)}
+  \deqn{ U_{j,k} | \beta \sim Dirichlet(\beta)}{U_{j,k} | beta ~ Dirichlet(beta)}
+  \deqn{ X_{i,j} | U_j, z_i=k \sim Multinomial(U_{j,k})}{X_{i,j} | U_j, z_i=k ~ Multinomial(U_{j,k})}
+
+  In case that \code{select_latent=FALSE} the first line is replaced with
+
+  \deqn{ \lambda | \alpha \sim Dirichlet(\alpha)}{lambda | alpha ~ Dirichlet(alpha)}
+
+  The initial inspiration came from  Dunson and Xing (2009) who proposed a Gibbs
+  sampling algorithm to solve this model. To speed up inference
+  a variational inference approach was derived and implemented in this package.
+}
+\references{
+1. Dunson, D. B. & Xing, C. Nonparametric Bayes Modeling of Multivariate Categorical Data. J. Am. Stat. Assoc. 104, 1042–1051 (2009).
+
+ 2. Blei, D. M., Ng, A. Y. & Jordan, M. I. Latent Dirichlet Allocation. J. Macine Learn. Res. 3, 993–1022 (2003).
+
+ 3. Blei, D. M. & Jordan, M. I. Variational inference for Dirichlet process mixtures. Bayesian Anal. 1, 121–144 (2006).
 }
