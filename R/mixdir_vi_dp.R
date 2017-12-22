@@ -53,7 +53,7 @@ mixdir_vi_dp <- function(X, n_latent, alpha, beta, n_cat, max_iter, epsilon,
       zeta[, k] <- sapply(1:n_ind, function(i){
         exp(
           (digamma(kappa1[k]) - digamma(kappa1[k] + kappa2[k])) +
-            (k - 1) * (digamma(kappa2[k]) - digamma(kappa1[k] + kappa2[k])) +
+            (if(k > 1) sum(sapply(1:(k-1), function(kp) (digamma(kappa2[kp]) - digamma(kappa1[kp] + kappa2[kp])))) else 0) +
             sum(sapply(1:n_quest, function(j){
               if(is.na(X[i,j])){
                 # If X_ij is missing replace it with sum over expected \E[X_ij == r] = phi[j,k,r]/sum(phi[j,k,])
