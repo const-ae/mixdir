@@ -57,3 +57,13 @@ test_that("prediction of class works", {
   res2 <- mixdir(tmp[1:30, ])
   expect_silent(predict_class(mushroom[42, ], res2$lambda, res2$category_prob))
 })
+
+
+
+test_that("finding the most representative answers works", {
+  data("mushroom")
+  res <- mixdir(mushroom[1:30, ], beta=1)
+  find_representative_answers(res$lambda, res$category_prob, top_n=3)
+})
+
+

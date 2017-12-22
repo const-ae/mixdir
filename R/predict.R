@@ -7,7 +7,8 @@
 #'   available.
 #' @param lambda a vector of probabilities for each category.
 #' @param category_prob a list of a list of a named vector with probabilties
-#'   for each answer, latent class and possible category.
+#'   for each answer, latent class and possible category. This
+#'   is usually handed over from the result of a call to \code{mixdir()}
 #'
 #' @details Usually the \code{lambda} and \code{category_prob} from a call to
 #'   \code{mixdir()} are used.
@@ -68,22 +69,47 @@ predict_class <- function(X, lambda, category_prob){
 }
 
 
-# predictive_answers <- function(lambda, U, categories, top_n=10){
-#   enframe(categories, name="question", value="response") %>%
-#     group_by(question) %>%
-#     unnest() %>%
-#     ungroup() %>%
-#     group_by(question, response) %>%
-#     mutate(class=list(1:n_latent),
-#            probability=list(predict_class(lambda=lambda, U=U, X=structure(response, names=question)))) %>%
-#     unnest() %>%
-#     mutate(lambda=res$lambda[class]) %>%
-#     arrange(-lambda, class, - probability) %>%
-#     group_by(class) %>%
-#     mutate(rank=rank(- probability, ties.method="first")) %>%
-#     filter(rank <= top_n) %>%
-#     select(- rank)
-# }
+#' Find the top representative columns and answers for each latent class
+#'
+#' @param lambda a vector of probabilities for each category.
+#' @param category_prob a list of a list of a named vector with probabilties
+#'   for each answer, latent class and possible category. This
+#'   is usually handed over from the result of a call to \code{mixdir()}
+#' @param top_n the number of top answers per category that will be returned. Default: 10.
+#'
+#' @return A data frame with four columns: column, category, class and probabilty.
+#'   The probability column contains the chance that an observation belongs to
+#'   the latent class if all that is known about that observation that
+#'   \code{`column`=`category`}
+#'
+#' @examples
+#'   data("mushroom")
+#'   res <- mixdir(mushroom[1:30, ], beta=1)
+#'   find_representative_answers(res$lambda, res$category_prob, top_n=3)
+#'
+#' @export
+find_representative_answers <- function(lambda, category_prob, top_n=10){
 
+  categories <- lapply(category_prob, function(x) names(x[[1]]))
+  cat_length <- sapply(categories, length)
+  all_columns <- unlist(sapply(seq_along(categories), function(i) rep(names(categories[i]), cat_length[i])))
+  all_responses <- unlist(categories)
+  stopifnot(length(all_columns) == length(all_responses))
+  probabilites <- sapply(seq_along(all_responses), function(i){
+    predict_class(lambda=lambda, category_prob = category_prob, X=structure(all_responses[i], names=all_columns[i]))
+  })
+  rep_factor <- if(is.matrix(probabilites)) nrow(probabilites) else 1
+  result <- data.frame(column=rep(all_columns, each=rep_factor),
+             answer=rep(all_responses, each=rep_factor),
+             class=1:rep_factor,
+             probability=c(probabilites),
+             stringsAsFactors = FALSE)
+
+  result <- result[order(- result$probability), ]
+  do.call(rbind, lapply(order(-lambda), function(k){
+    tmp <- result[result$class == k, ]
+    tmp[1:min(top_n, nrow(tmp)), ]
+  }))
+}
 
 

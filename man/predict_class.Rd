@@ -14,7 +14,8 @@ available.}
 \item{lambda}{a vector of probabilities for each category.}
 
 \item{category_prob}{a list of a list of a named vector with probabilties
-for each answer, latent class and possible category.}
+for each answer, latent class and possible category. This
+is usually handed over from the result of a call to \code{mixdir()}}
 }
 \value{
 A vector of \code{length(lambda)} with the probability that \code{X}
@@ -26,4 +27,14 @@ Predict the class of a new observation.
 \details{
 Usually the \code{lambda} and \code{category_prob} from a call to
   \code{mixdir()} are used.
+}
+\examples{
+  data("mushroom")
+  X <- as.matrix(mushroom)[1:30, ]
+
+  res <- mixdir(X)
+
+  # Predict Class
+  predict_class(mushroom[40, ], res$lambda, res$category_prob)
+  predict_class(c(`gill-color`="black"), res$lambda, res$category_prob)
 }
