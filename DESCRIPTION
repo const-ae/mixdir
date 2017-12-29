@@ -14,3 +14,5 @@ Suggests: testthat, tibble, purrr
 RoxygenNote: 6.0.1
 Imports: extraDistr,
     stats
+Depends: 
+    R (>= 2.10)
