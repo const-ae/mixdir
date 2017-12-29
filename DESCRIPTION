@@ -5,8 +5,8 @@ Version: 0.1.0
 Authors@R: person("Constantin", "Ahlmann-Eltze", email = "artjom31415@googlemail.com", role = c("aut", "cre"))
 Description: The package implements a hierarchical Dirichlet mixture of Dirichlet distributions.
     It can be used to reduce the dimensionality of hierarchical data, cluster individuals or decompose 
-    probability tensors. The model is based on a paper by Dunson and Xing (2009), but instead of a Dirichlet 
-    Process mixture of Dirichlet distributions a finite dimensional approximation is made.
+    probability tensors. The model is based on a paper by Dunson and Xing (2009), but implements a scalable
+    variational inference algorithm so that it is applicable to large datasets.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
