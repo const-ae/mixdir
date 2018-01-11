@@ -62,12 +62,18 @@ mixdir <- function(X,
   }
 
   categories <- lapply(1:ncol(X), function(j){
-    if(is.factor(X[,j ])) as.character(levels(X[,j ]))
+    if(is.factor(X[,j ])) levels(X[,j ])
     else as.character(sort(unique(X[, j])))
   })
 
+  # X <- as.matrix(X)
+  # class(X) = "character"
+  # Create a numeric matrix with the entries 1 to N_cat_j
+  if(is.matrix(X)){
+    X <- as.data.frame(X)
+  }
+  X[colnames(X)] <- lapply(X[colnames(X)], function(col)as.numeric(as.factor(as.character(col))))
   X <- as.matrix(X)
-  class(X) = "character"
 
 
   if(! select_latent){
@@ -81,6 +87,9 @@ mixdir <- function(X,
 }
 
 
+#' @useDynLib mixdir
+#' @importFrom Rcpp sourceCpp
+NULL
 
 
 

@@ -3,3 +3,5 @@
 export(find_representative_answers)
 export(mixdir)
 export(predict_class)
+importFrom(Rcpp,sourceCpp)
+useDynLib(mixdir)

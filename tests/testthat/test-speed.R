@@ -3,19 +3,6 @@
 library(mixdir)
 
 
-conv_phi_to_array <- function(phi, n_quest, n_latent){
-  cat_length <- sapply(phi, function(phi_j) length(phi_j[[1]]))
-  phia <- array(NA_real_, dim = c(n_quest, n_latent, max(cat_length)))
-  for(j in 1:n_quest){
-    for(k in 1:3){
-      for(r in 1:cat_length[j]){
-        phia[j,k,r] <- phi[[j]][[k]][r]
-      }
-    }
-  }
-  phia
-}
-
 library(Rcpp)
 cppFunction('double rcppCalc(NumericMatrix X, NumericVector phia, NumericMatrix zeta, int n_quest, int n_latent, int n_cat){
   double result = 0;
@@ -150,11 +137,6 @@ orig_for_loop <- function(X, phi, zeta){
   counter
 }
 
-original_impl <- function(X, phi, zeta){
-  sum(sapply(1:nrow(X), function(i) sum(sapply(1:ncol(X), function(j) sum(sapply(1:3, function(k)
-    mixdir:::expec_log_xij(X[i,j], phi[[j]][[k]], zeta[i,k]) ))))))
-}
-
 orig_call_inlined <- function(X, phi, zeta){
   sum(sapply(1:nrow(X), function(i) sum(sapply(1:ncol(X), function(j) sum(sapply(1:3, function(k){
     if(is.na(X[i,j])){
@@ -187,7 +169,7 @@ test_that("Find out how to optimize the functions", {
   microbenchmark::microbenchmark(orig_for_loop2(X2, phia, zeta),
                                  rearranged_for_loop2(X2, phia, zeta),
                                  rearranged_for_loop3(X2, phia, zeta),
-                                 original_impl(X, phi, zeta),
+                                 orig_call_inlined(X, phi, zeta),
                                  rcppCalc(X2, as.numeric(phia), zeta, dim(phia)[1], dim(phia)[2], dim(phia)[3]),
                                  times=30)
 

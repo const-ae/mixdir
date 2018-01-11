@@ -5,6 +5,7 @@ mixdir_vi_dp <- function(X, n_latent, alpha, beta, categories, max_iter, epsilon
   # Initialize the parameters
   n_ind <- nrow(X)
   n_quest <- ncol(X)
+  n_cat <- max(X, na.rm=TRUE)
 
   if(is.null(alpha) || length(alpha) == 0){
     alpha1 <- 1
@@ -39,7 +40,7 @@ mixdir_vi_dp <- function(X, n_latent, alpha, beta, categories, max_iter, epsilon
   if(is.null(phi_init)){
     phi_init <- lapply(1:n_quest, function(j) lapply(1:n_latent, function(k) {
       x <- sample(1:3, size=length(categories[[j]]), replace=TRUE)
-      names(x) <- categories[[j]]
+      # names(x) <- categories[[j]]
       x
     }))
   }
@@ -47,7 +48,7 @@ mixdir_vi_dp <- function(X, n_latent, alpha, beta, categories, max_iter, epsilon
   kappa2 <-kappa2_init
   zeta <- zeta_init
   phi <- phi_init
-
+  phia <- conv_phi_to_array(phi, n_quest, n_latent)
 
   # Run the algorithm
   iter <- 1
@@ -61,22 +62,23 @@ mixdir_vi_dp <- function(X, n_latent, alpha, beta, categories, max_iter, epsilon
     kappa2 <- alpha2 + colSums(summed_up_phi)
 
     # Update zeta
-    for(k in 1:n_latent){
-      zeta[, k] <- sapply(1:n_ind, function(i){
-        exp(
-          (digamma(kappa1[k]) - digamma(kappa1[k] + kappa2[k])) +
-            (if(k > 1) sum(sapply(1:(k-1), function(kp) (digamma(kappa2[kp]) - digamma(kappa1[kp] + kappa2[kp])))) else 0) +
-            sum(sapply(1:n_quest, function(j){
-              if(is.na(X[i,j])){
-                # If X_ij is missing ignore it
-                0
-              }else{
-                digamma(phi[[j]][[k]][X[i,j]]) - digamma(sum(phi[[j]][[k]]))
-              }
-            })) - 1
-        )
-      })
-    }
+    # for(k in 1:n_latent){
+    #   zeta[, k] <- sapply(1:n_ind, function(i){
+    #     exp(
+    #       (digamma(kappa1[k]) - digamma(kappa1[k] + kappa2[k])) +
+    #         (if(k > 1) sum(sapply(1:(k-1), function(kp) (digamma(kappa2[kp]) - digamma(kappa1[kp] + kappa2[kp])))) else 0) +
+    #         sum(sapply(1:n_quest, function(j){
+    #           if(is.na(X[i,j])){
+    #             # If X_ij is missing ignore it
+    #             0
+    #           }else{
+    #             digamma(phi[[j]][[k]][X[i,j]]) - digamma(sum(phi[[j]][[k]]))
+    #           }
+    #         })) - 1
+    #     )
+    #   })
+    # }
+    zeta <- mixdir:::update_zeta_dp_cpp(zeta, X, phia, kappa1, kappa2, n_ind, n_quest, n_latent, n_cat)
     zeta <- zeta / rowSums(zeta)
     zeta <- zeta[, order(-colSums(zeta))]       # Make sure the zeta columns are ordered optimally
 
@@ -84,20 +86,22 @@ mixdir_vi_dp <- function(X, n_latent, alpha, beta, categories, max_iter, epsilon
     # Update phi
     for(j in 1:n_quest){
       for(k in 1:n_latent){
-        for(r in categories[[j]]){
+        for(r in seq_along(categories[[j]])){
           phi[[j]][[k]][r] <- sum(zeta[ ,k] * (X[, j] == r), na.rm=TRUE) + beta
         }
       }
     }
+    phia <- conv_phi_to_array(phi, n_quest, n_latent)
 
     elbo <- dp_expec_log_v(kappa1, kappa2, rep(alpha1, length(kappa1)), rep(alpha2, length(kappa2))) +
       sum(sapply(1:n_ind, function(i)dp_expec_log_zi(zeta[i, ], kappa1, kappa2))) +
-      sum(sapply(1:n_quest, function(j) sum(sapply(1:n_latent, function(k) dp_expec_log_ujk(phi[[j]][[k]], rep(beta, length(categories[[j]]))) )))) +
-      sum(sapply(1:n_ind, function(i) sum(sapply(1:n_quest, function(j) sum(sapply(1:n_latent, function(k)
-        dp_expec_log_xij(X[i,j], phi[[j]][[k]], zeta[i,k]) )))))) +
+      sum(sapply(1:n_quest, function(j) sum(sapply(1:n_latent, function(k) expec_log_ujk(phi[[j]][[k]], rep(beta, length(categories[[j]]))) )))) +
+      # sum(sapply(1:n_ind, function(i) sum(sapply(1:n_quest, function(j) sum(sapply(1:n_latent, function(k)
+      #   dp_expec_log_xij(X[i,j], phi[[j]][[k]], zeta[i,k]) )))))) +
+      expec_log_x_cpp(X, phia, zeta, n_quest, n_latent, n_cat) +
       dp_entrop_v(kappa1, kappa2) +
-      sum(sapply(1:n_ind, function(i)dp_entrop_zeta(zeta[i, ]))) +
-      sum(sapply(1:n_quest, function(j) sum(sapply(1:n_latent, function(k) dp_entrop_phi(phi[[j]][[k]]) ))))
+      sum(sapply(1:n_ind, function(i) entrop_zeta(zeta[i, ]))) +
+      sum(sapply(1:n_quest, function(j) sum(sapply(1:n_latent, function(k) entrop_phi(phi[[j]][[k]]) ))))
 
     if(iter != 1 && ! is.infinite(elbo) && elbo < elbo_hist[iter - 1])
       warning(paste0("The ELBO decreased. This should not happen, it might be due to numerical instabilities or a bug in the code. ",
@@ -122,6 +126,7 @@ mixdir_vi_dp <- function(X, n_latent, alpha, beta, categories, max_iter, epsilon
   for(j in 1:n_quest){
     for(k in 1:n_latent){
       U[[j]][[k]] <- (phi[[j]][[k]]+beta) / sum(phi[[j]][[k]] + beta)
+      names(U[[j]][[k]]) <- categories[[j]]
     }
   }
 
@@ -174,17 +179,6 @@ dp_expec_log_zi <- function(zeta_i, kappa_a, kappa_b){
   }))
 }
 
-dp_expec_log_ujk <- function(phi_jk, beta){
-  lgamma(sum(beta)) - sum(lgamma(beta)) + sum(sapply(1:length(beta), function(k)(beta[k] - 1) * (digamma(phi_jk[k]) - digamma(sum(phi_jk)))))
-}
-
-dp_expec_log_xij <- function(x_ij, phi_jk, zeta_ik){
-  if(is.na(x_ij)){
-    1
-  }else{
-    zeta_ik * (digamma(phi_jk[x_ij]) - digamma(sum(phi_jk)))
-  }
-}
 
 dp_entrop_v <- function(kappa_a, kappa_b){
   # Entropy of beta distributions
@@ -195,14 +189,7 @@ dp_entrop_v <- function(kappa_a, kappa_b){
   }))
 }
 
-dp_entrop_zeta <- function(zeta_i){
-  zeta_i[zeta_i <= .Machine$double.xmin] <- .Machine$double.xmin
-  - sum(zeta_i * log(zeta_i))
-}
 
-dp_entrop_phi <- function(phi_jk){
-  - lgamma(sum(phi_jk)) + sum(lgamma(phi_jk)) - sum(sapply(1:length(phi_jk), function(k)(phi_jk[k] - 1) * (digamma(phi_jk[k]) - digamma(sum(phi_jk)))))
-}
 
 
 
