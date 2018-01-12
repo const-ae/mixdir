@@ -17,7 +17,7 @@ test_that("VI works for simple models", {
   expect_true(assigned_cluster[10] != assigned_cluster[7])
 })
 
-context("Variational Inference")
+
 test_that("VI can handle missign values", {
   X <- create_data()
   set.seed(1)
@@ -33,8 +33,17 @@ test_that("VI can handle missign values", {
   expect_true(assigned_cluster[10] != assigned_cluster[7])
 })
 
+test_that("VI can handle more complex models", {
+  tmp <- generate_categorical_dataset(n_ind=1000, n_quest=5, n_cat=3, n_true_classes=4)
+  set.seed(1)
+  expect_silent(result <- mixdir(tmp$X, n_latent=4, select_latent=FALSE))
+})
 
-
+test_that("VI can handle the mushroom dataset", {
+  data("mushroom")
+  set.seed(4)
+  expect_silent(res <- mixdir(mushroom, n_latent=5))
+})
 
 context("Variational Inference DP")
 

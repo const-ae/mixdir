@@ -103,7 +103,7 @@ mixdir_vi_dp <- function(X, n_latent, alpha, beta, categories, max_iter, epsilon
       sum(sapply(1:n_ind, function(i) entrop_zeta(zeta[i, ]))) +
       sum(sapply(1:n_quest, function(j) sum(sapply(1:n_latent, function(k) entrop_phi(phi[[j]][[k]]) ))))
 
-    if(iter != 1 && ! is.infinite(elbo) && elbo < elbo_hist[iter - 1])
+    if(iter != 1 && ! is.infinite(elbo) && elbo - elbo_hist[iter - 1] < - epsilon)
       warning(paste0("The ELBO decreased. This should not happen, it might be due to numerical instabilities or a bug in the code. ",
                      "Please contact the maintainer to report this.\n"))
     if(iter != 1 && ! is.infinite(elbo) && elbo - elbo_hist[iter - 1] < epsilon) converged <- TRUE

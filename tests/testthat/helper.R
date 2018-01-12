@@ -46,3 +46,37 @@ create_data <- function(){
   t(Xn)
 
 }
+
+
+
+generate_categorical_dataset <- function(n_ind, n_quest, n_cat, n_true_classes, lambda_true=1/n_true_classes){
+
+  if(length(n_cat) > 1 && length(n_cat) != n_quest) stop("n_cat must either be length or match the n_quest")
+  if(length(n_cat) == 1){
+    n_cat <- rep(n_cat, times=n_quest)
+  }
+
+  # First step generate true class representives
+  U_true <- lapply(1:n_quest, function(j)lapply(1:n_true_classes, function(k) rep(NA, n_cat[j]) ))
+  for(k in 1:n_true_classes){
+    for(j in 1:n_quest){
+      U_true[[j]][[k]] <- rmutil::rbetabinom(n_cat[j], 100, 0.05, 10) + 1
+    }
+  }
+
+  if(length(lambda_true) == 1) {
+    lambda_true <- rep(lambda_true, n_true_classes)
+  }
+  true_latent <- sample(1:n_true_classes, n_ind, replace=TRUE, prob=lambda_true)
+
+
+  data <- matrix(NA, ncol=n_quest, nrow=n_ind)
+  for(i in 1:n_ind){
+    for(j in 1:n_quest){
+      data[i, j] <- which(extraDistr::rdirmnom(1, 1, alpha=U_true[[j]][[true_latent[i]]]) == 1)
+    }
+  }
+
+  list(X=data, true_latent=true_latent, U_true=U_true)
+
+}
