@@ -144,7 +144,8 @@ mixdir_vi_dp <- function(X, n_latent, alpha, beta, categories, max_iter, epsilon
     converged=converged,
     convergence=elbo_hist,
     lambda=lambda,
-    ind_class=zeta,
+    pred_class=apply(zeta, 1, which.max),
+    class_prob=zeta,
     category_prob=U,
     specific_params=list(
       kappa1=kappa1,

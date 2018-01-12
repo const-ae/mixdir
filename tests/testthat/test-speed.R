@@ -161,7 +161,7 @@ test_that("Find out how to optimize the functions", {
   result <- mixdir::mixdir(X, n_latent=3, select_latent=FALSE, max_iter = 2)
 
   phi <- result$specific_params$phi
-  zeta <- result$ind_class
+  zeta <- result$class_prob
   phia <- conv_phi_to_array(phi, ncol(X), 3)
 
 

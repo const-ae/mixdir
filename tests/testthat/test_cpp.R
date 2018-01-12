@@ -21,7 +21,7 @@ test_that("expec_log_xij works", {
   result <- mixdir::mixdir(X, n_latent=3, select_latent=FALSE, max_iter = 2)
 
   phi <- result$specific_params$phi
-  zeta <- result$ind_class
+  zeta <- result$class_prob
   omega <- result$specific_params$omega
   phia <- mixdir:::conv_phi_to_array(phi, ncol(X), 3)
 
@@ -45,8 +45,8 @@ test_that("zeta update works", {
   result <- mixdir::mixdir(X, n_latent=3, select_latent=FALSE, max_iter = 2)
 
   phi <- result$specific_params$phi
-  zeta <- result$ind_class
-  zeta2 <- result$ind_class
+  zeta <- result$class_prob
+  zeta2 <- result$class_prob
   omega <- result$specific_params$omega
   phia <- mixdir:::conv_phi_to_array(phi, ncol(X), 3)
   n_latent <- 3
@@ -92,8 +92,8 @@ test_that("zeta update works for dp", {
   result <- suppressWarnings(mixdir::mixdir(X, n_latent=n_latent, select_latent=TRUE, max_iter = 2))
 
   phi <- result$specific_params$phi
-  zeta <- result$ind_class
-  zeta2 <- result$ind_class
+  zeta <- result$class_prob
+  zeta2 <- result$class_prob
   kappa1 <- result$specific_params$kappa1
   kappa2 <- result$specific_params$kappa2
   phia <- mixdir:::conv_phi_to_array(phi, ncol(X), n_latent)
