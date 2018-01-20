@@ -57,22 +57,26 @@ mixdir <- function(X,
 
 
   na.handle <- match.arg(na.handle, c("ignore", "category"))
-  if(na.handle == "category"){
-    X[is.na(X)] <- "NA"
-  }
 
-  categories <- lapply(1:ncol(X), function(j){
-    if(is.factor(X[,j ])) levels(X[,j ])
-    else as.character(sort(unique(X[, j])))
-  })
 
-  # X <- as.matrix(X)
-  # class(X) = "character"
+
+
   # Create a numeric matrix with the entries 1 to N_cat_j
   if(is.matrix(X)){
     X <- as.data.frame(X)
   }
-  X[colnames(X)] <- lapply(X[colnames(X)], function(col)as.numeric(as.factor(as.character(col))))
+  X[colnames(X)] <- lapply(X[colnames(X)], function(col){
+    if(! is.factor(col)){
+      col <- as.factor(as.character(col))
+    }
+    if(na.handle == "category"){
+      levels(col) <- c(levels(col), "(Missing)")
+      col[is.na(col)] <- "(Missing)"
+    }
+    col
+  })
+  categories <- lapply(1:ncol(X), function(j)levels(X[, j]))
+  X[colnames(X)] <- lapply(X[colnames(X)], function(col) as.numeric(col))
   X <- as.matrix(X)
 
 
