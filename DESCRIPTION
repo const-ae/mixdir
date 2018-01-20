@@ -14,7 +14,8 @@ Suggests: testthat,
     tibble,
     purrr,
     dplyr,
-    rmutil
+    rmutil,
+    pheatmap
 RoxygenNote: 6.0.1
 Imports: extraDistr,
     stats,

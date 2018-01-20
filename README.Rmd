@@ -1,0 +1,134 @@
+---
+output:
+  md_document:
+    variant: markdown_github
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README_plots/"
+)
+```
+
+# mixdir
+
+The goal of mixdir is to cluster high dimensional categorical datasets.
+
+It can
+
+* handle missing data
+* infer a reasonable number of latent class (try `mixdir(select_latent=TRUE)`)
+* cluster datasets with more than 70,000 observations and 60 features
+* propagate uncertainty and produce a soft clustering
+
+## Installation
+
+```{r installation, eval=FALSE, include=TRUE}
+devtools::install_github("const-ae/mixdir")
+```
+
+
+## Example
+
+Clustering the [mushroom](https://archive.ics.uci.edu/ml/datasets/mushroom) data set.
+
+```{r example_load}
+# Loading the library and the data
+library(mixdir)
+set.seed(1)
+
+data("mushroom")
+# High dimensional dataset: 8124 mushroom and 23 different features
+mushroom[1:10, 1:5]
+```
+
+Calling the clustering function `mixdir` on a subset of the data:
+
+```{r}
+# Clustering into 3 latent classes
+result <- mixdir(mushroom[1:1000, 1:5], n_latent=3)
+```
+
+
+Analyzing the result
+
+```{r example}
+# Latent class of of first 10 mushrooms
+head(result$pred_class, n=10)
+
+# Soft Clustering for first 10 mushrooms
+head(result$class_prob, n=10)
+pheatmap::pheatmap(result$class_prob, cluster_cols=FALSE,
+                  labels_col = paste("Class", 1:3))
+
+# Structure of latent class 1
+# (bruises, cap color either yellow or white, edible etc.)
+purrr::map(result$category_prob, 1)
+
+# The most predicitive features for each class
+find_representative_answers(result$lambda, result$category_prob, top_n=3)
+# For example: if all I know about a mushroom is that it has a
+# yellow cap, then I am 99% certain that it will be in class 1
+predict_class(c(`cap-color`="yellow"), result$lambda, result$category_prob)
+
+# Convergence
+plot(result$convergence, main=paste0("ELBO: ", formatC(result$ELBO, digits = 3)))
+```
+
+
+
+
+# Underlying Model
+
+The package implements a variational inference algorithm to solve a Bayesian latent class model (LCM). 
+
+
+![](README_plots/model_plate_notation.png)
+
+
+<a href="url"><img src="README_plots/equations_model.png" align="left" height="500" width="500" ></a>
+
+
+
+# Disclaimer 
+
+This package is still under development and can still change profoundly. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
