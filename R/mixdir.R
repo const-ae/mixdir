@@ -20,6 +20,8 @@
 #' @param na.handle Either "ignore" or "category". If it is "category" all \code{NA}'s in the dataset are converted to
 #'   the string "NA" and treated as their own category. If it is "ignore" the \code{NA}'s are treated as missing completely
 #'   at random and are ignored during the parameter updates.
+#' @param repetions A number specifying how often to repeat the calculation with different initializations. Automatically
+#'   selects the best run (i.e. max(ELBO)). Default: 1.
 #' @param ... Additional parameters passed on to the underlying functions. The parameters are verbose, phi_init,
 #'   zeta_init and if select_latent=FALSE omega_init or if select_latent=TRUE kappa1_init and kappa2_init.
 #'
@@ -53,6 +55,7 @@ mixdir <- function(X,
                    max_iter=100,
                    epsilon=1e-3,
                    na.handle=c("ignore", "category"),
+                   repetions=1,
                    ...){
 
 
@@ -79,15 +82,22 @@ mixdir <- function(X,
   X[colnames(X)] <- lapply(X[colnames(X)], function(col) as.numeric(col))
   X <- as.matrix(X)
 
-
-  if(! select_latent){
-    mixdir_vi(X=X, n_latent=n_latent, alpha=alpha, beta=beta,
-              categories=categories, max_iter=max_iter, epsilon=epsilon, ...)
-  }else{
-    mixdir_vi_dp(X=X, n_latent=n_latent, alpha=alpha, beta=beta,
-                 categories=categories, max_iter=max_iter, epsilon=epsilon, ...)
+  result <- NULL
+  for(repit in seq_len(repetions)){
+    if(! select_latent){
+      result_tmp <- mixdir_vi(X=X, n_latent=n_latent, alpha=alpha, beta=beta,
+                categories=categories, max_iter=max_iter, epsilon=epsilon, ...)
+    }else{
+      result_tmp <- mixdir_vi_dp(X=X, n_latent=n_latent, alpha=alpha, beta=beta,
+                   categories=categories, max_iter=max_iter, epsilon=epsilon, ...)
+    }
+    if(is.null(result)){
+      result <- result_tmp
+    }else if(result$ELBO < result_tmp$ELBO){
+      result <- result_tmp
+    }
   }
-
+  result
 }
 
 

@@ -118,6 +118,7 @@ mixdir_vi <- function(X, n_latent, alpha, beta, categories, max_iter, epsilon,
   list(
     converged=converged,
     convergence=elbo_hist,
+    ELBO=elbo,
     lambda=omega/sum(omega),
     pred_class=apply(zeta, 1, which.max),
     class_prob=zeta,

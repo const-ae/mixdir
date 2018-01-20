@@ -92,6 +92,22 @@ test_that("mixdir can handle missing values as category", {
   expect_true(assigned_cluster[10] != assigned_cluster[7])
 })
 
+test_that("mixdir repetitions selects the best run", {
+  X <- create_data()
+  set.seed(1)
+  result <- mixdir(X, n_latent=10, select_latent = TRUE, repetions = 3)
+
+  set.seed(1)
+  result1 <- mixdir(X, n_latent=10, select_latent = TRUE)
+  result2 <- mixdir(X, n_latent=10, select_latent = TRUE)
+  result3 <- mixdir(X, n_latent=10, select_latent = TRUE)
+
+  expect_equal(result$ELBO, max(c(result1$ELBO, result2$ELBO, result3$ELBO)))
+})
+
+
+
+
 context("Prediction")
 
 test_that("prediction of class works", {
