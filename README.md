@@ -130,9 +130,11 @@ Underlying Model
 
 The package implements a variational inference algorithm to solve a Bayesian latent class model (LCM).
 
+<img src="README_plots/equations_model.png" align="center" style="height: 150px" >
+
 ![](README_plots/model_plate_notation.png)
 
-<a href="url"><img src="README_plots/equations_model.png" align="left" height="500" width="500" ></a>
+------------------------------------------------------------------------
 
 Disclaimer
 ==========
