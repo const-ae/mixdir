@@ -78,7 +78,7 @@ mixdir_vi_dp <- function(X, n_latent, alpha, beta, categories, max_iter, epsilon
     #     )
     #   })
     # }
-    zeta <- mixdir:::update_zeta_dp_cpp(zeta, X, phia, kappa1, kappa2, n_ind, n_quest, n_latent, n_cat)
+    zeta <- update_zeta_dp_cpp(zeta, X, phia, kappa1, kappa2, n_ind, n_quest, n_latent, n_cat)
     zeta <- zeta / rowSums(zeta)
     zeta <- zeta[, order(-colSums(zeta))]       # Make sure the zeta columns are ordered optimally
 

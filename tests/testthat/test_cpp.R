@@ -18,12 +18,12 @@ test_that("expec_log_xij works", {
   X2 <- as.matrix(purrr::map_df(purrr::map_df(X, as.factor), as.numeric))
   any(is.na(X2))
   set.seed(1)
-  result <- mixdir::mixdir(X, n_latent=3, select_latent=FALSE, max_iter = 2)
+  result <- mixdir(X, n_latent=3, select_latent=FALSE, max_iter = 2)
 
   phi <- result$specific_params$phi
   zeta <- result$class_prob
   omega <- result$specific_params$omega
-  phia <- mixdir:::conv_phi_to_array(phi, ncol(X), 3)
+  phia <- conv_phi_to_array(phi, ncol(X), 3)
 
   n_ind <- nrow(X)
   n_quest <- ncol(X)
@@ -31,7 +31,7 @@ test_that("expec_log_xij works", {
   rv <- sum(sapply(1:n_ind, function(i) sum(sapply(1:n_quest, function(j) sum(sapply(1:n_latent, function(k)
         expec_log_xij(X2[i,j], phi[[j]][[k]], zeta[i,k]) ))))))
 
-  cv <- mixdir:::expec_log_x_cpp(X2, as.numeric(phia), zeta, dim(phia)[1], dim(phia)[2], dim(phia)[3])
+  cv <- expec_log_x_cpp(X2, as.numeric(phia), zeta, dim(phia)[1], dim(phia)[2], dim(phia)[3])
   expect_equal(rv, cv)
 })
 
@@ -42,13 +42,13 @@ test_that("zeta update works", {
   X <- as.matrix(purrr::map_df(purrr::map_df(X, as.factor), as.numeric))
   any(is.na(X))
   set.seed(1)
-  result <- mixdir::mixdir(X, n_latent=3, select_latent=FALSE, max_iter = 2)
+  result <- mixdir(X, n_latent=3, select_latent=FALSE, max_iter = 2)
 
   phi <- result$specific_params$phi
   zeta <- result$class_prob
   zeta2 <- result$class_prob
   omega <- result$specific_params$omega
-  phia <- mixdir:::conv_phi_to_array(phi, ncol(X), 3)
+  phia <- conv_phi_to_array(phi, ncol(X), 3)
   n_latent <- 3
   n_quest <- ncol(X)
   n_ind <- nrow(X)
@@ -68,7 +68,7 @@ test_that("zeta update works", {
   }
 
 
-  zeta2 <- mixdir:::update_zeta_cpp(zeta2, X, phia, omega, n_ind, n_quest, n_latent, n_cat)
+  zeta2 <- update_zeta_cpp(zeta2, X, phia, omega, n_ind, n_quest, n_latent, n_cat)
 
   expect_equal(zeta, zeta2)
 })
@@ -89,14 +89,14 @@ test_that("zeta update works for dp", {
 
 
   set.seed(1)
-  result <- suppressWarnings(mixdir::mixdir(X, n_latent=n_latent, select_latent=TRUE, max_iter = 2))
+  result <- suppressWarnings(mixdir(X, n_latent=n_latent, select_latent=TRUE, max_iter = 2))
 
   phi <- result$specific_params$phi
   zeta <- result$class_prob
   zeta2 <- result$class_prob
   kappa1 <- result$specific_params$kappa1
   kappa2 <- result$specific_params$kappa2
-  phia <- mixdir:::conv_phi_to_array(phi, ncol(X), n_latent)
+  phia <- conv_phi_to_array(phi, ncol(X), n_latent)
 
   for(k in 1:n_latent){
     zeta[, k] <- sapply(1:n_ind, function(i){
@@ -115,7 +115,7 @@ test_that("zeta update works for dp", {
     })
   }
 
-  zeta2 <- mixdir:::update_zeta_dp_cpp(zeta2, X, phia, kappa1, kappa2, n_ind, n_quest, n_latent, n_cat)
+  zeta2 <- update_zeta_dp_cpp(zeta2, X, phia, kappa1, kappa2, n_ind, n_quest, n_latent, n_cat)
 
   expect_equal(rowSums(zeta), rowSums(zeta2))
   expect_equal(zeta, zeta2)
