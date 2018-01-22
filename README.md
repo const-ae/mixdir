@@ -23,6 +23,8 @@ Example
 
 Clustering the [mushroom](https://archive.ics.uci.edu/ml/datasets/mushroom) data set.
 
+![](README_plots/clustering_overview.png)
+
 ``` r
 # Loading the library and the data
 library(mixdir)
