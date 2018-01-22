@@ -70,7 +70,7 @@ pheatmap::pheatmap(result$class_prob, cluster_cols=FALSE,
 purrr::map(result$category_prob, 1)
 
 # The most predicitive features for each class
-find_representative_answers(result$lambda, result$category_prob, top_n=3)
+find_predictive_features(result$lambda, result$category_prob, top_n=3)
 # For example: if all I know about a mushroom is that it has a
 # yellow cap, then I am 99% certain that it will be in class 1
 predict_class(c(`cap-color`="yellow"), result$lambda, result$category_prob)

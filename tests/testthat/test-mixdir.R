@@ -132,7 +132,7 @@ test_that("prediction of class works", {
 test_that("finding the most representative answers works", {
   data("mushroom")
   res <- mixdir(mushroom[1:30, ], beta=1)
-  find_representative_answers(res$lambda, res$category_prob, top_n=3)
+  find_predictive_features(res$lambda, res$category_prob, top_n=3)
 })
 
 

@@ -69,11 +69,11 @@ predict_class <- function(X, lambda, category_prob){
 }
 
 
-#' Find the top representative columns and answers for each latent class
+#' Find the top predictive features and values for each latent class
 #'
 #' @param lambda a vector of probabilities for each category.
 #' @param category_prob a list of a list of a named vector with probabilties
-#'   for each answer, latent class and possible category. This
+#'   for each feature, latent class and possible category. This
 #'   is usually handed over from the result of a call to \code{mixdir()}
 #' @param top_n the number of top answers per category that will be returned. Default: 10.
 #'
@@ -85,10 +85,10 @@ predict_class <- function(X, lambda, category_prob){
 #' @examples
 #'   data("mushroom")
 #'   res <- mixdir(mushroom[1:30, ], beta=1)
-#'   find_representative_answers(res$lambda, res$category_prob, top_n=3)
+#'   find_predictive_features(res$lambda, res$category_prob, top_n=3)
 #'
 #' @export
-find_representative_answers <- function(lambda, category_prob, top_n=10){
+find_predictive_features <- function(lambda, category_prob, top_n=10){
 
   categories <- lapply(category_prob, function(x) names(x[[1]]))
   cat_length <- sapply(categories, length)

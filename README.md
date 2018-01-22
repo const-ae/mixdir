@@ -103,7 +103,7 @@ purrr::map(result$category_prob, 1)
 #> 0.9996447805 0.0003552195
 
 # The most predicitive features for each class
-find_representative_answers(result$lambda, result$category_prob, top_n=3)
+find_predictive_features(result$lambda, result$category_prob, top_n=3)
 #>       column    answer class probability
 #> 19 cap-color    yellow     1   0.9988010
 #> 22 cap-shape      bell     1   0.9981940
