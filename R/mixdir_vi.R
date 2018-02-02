@@ -110,7 +110,7 @@ mixdir_vi <- function(X, n_latent, alpha, beta, categories, max_iter, epsilon,
   names(U) <- colnames(X)
   for(j in 1:n_quest){
     for(k in 1:n_latent){
-      U[[j]][[k]] <- (phi[[j]][[k]]+beta) / sum(phi[[j]][[k]] + beta)
+      U[[j]][[k]] <- (phi[[j]][[k]]) / sum(phi[[j]][[k]])
       names(U[[j]][[k]]) <- categories[[j]]
     }
   }
