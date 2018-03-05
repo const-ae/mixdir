@@ -65,9 +65,8 @@ mixdir <- function(X,
 
 
   # Create a numeric matrix with the entries 1 to N_cat_j
-  if(is.matrix(X)){
-    X <- as.data.frame(X)
-  }
+  X <- as.data.frame(X)
+
   X[colnames(X)] <- lapply(X[colnames(X)], function(col){
     if(! is.factor(col)){
       col <- as.factor(as.character(col))
