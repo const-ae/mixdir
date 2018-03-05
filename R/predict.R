@@ -88,7 +88,13 @@ predict_class <- function(X, lambda, category_prob){
 #'   find_predictive_features(res$lambda, res$category_prob, top_n=3)
 #'
 #' @export
-find_predictive_features <- function(lambda, category_prob, top_n=10){
+find_predictive_features <- function(x, ...){
+  UseMethod("find_predictive_features", x)
+}
+
+#' @describeIn find_predictive_features find predictive features for generic combinations
+#'   of a vector lambda and a list category_prob
+find_predictive_features.default <- function(lambda, category_prob, top_n=10){
 
   categories <- lapply(category_prob, function(x) names(x[[1]]))
   cat_length <- sapply(categories, length)
@@ -110,6 +116,12 @@ find_predictive_features <- function(lambda, category_prob, top_n=10){
     tmp <- result[result$class == k, ]
     tmp[1:min(top_n, nrow(tmp)), ]
   }))
+}
+
+#' @describeIn find_predictive_features find_predictive_features find predictive features for
+#'   an object of class mixdir
+find_predictive_features.mixdir <- function(mixdir_obj, top_n=3){
+  find_predictive_features(mixdir_obj$lambda, mixdir_obj$category_prob, top_n=top_n)
 }
 
 

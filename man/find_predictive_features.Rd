@@ -2,9 +2,15 @@
 % Please edit documentation in R/predict.R
 \name{find_predictive_features}
 \alias{find_predictive_features}
+\alias{find_predictive_features.default}
+\alias{find_predictive_features.mixdir}
 \title{Find the top predictive features and values for each latent class}
 \usage{
-find_predictive_features(lambda, category_prob, top_n = 10)
+find_predictive_features(x, ...)
+
+\method{find_predictive_features}{default}(lambda, category_prob, top_n = 10)
+
+\method{find_predictive_features}{mixdir}(mixdir_obj, top_n = 3)
 }
 \arguments{
 \item{lambda}{a vector of probabilities for each category.}
@@ -24,6 +30,15 @@ A data frame with four columns: column, category, class and probabilty.
 \description{
 Find the top predictive features and values for each latent class
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{default}: find predictive features for generic combinations
+of a vector lambda and a list category_prob
+
+\item \code{mixdir}: find_predictive_features find predictive features for
+an object of class mixdir
+}}
+
 \examples{
   data("mushroom")
   res <- mixdir(mushroom[1:30, ], beta=1)
