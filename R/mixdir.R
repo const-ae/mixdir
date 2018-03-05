@@ -96,6 +96,7 @@ mixdir <- function(X,
       result <- result_tmp
     }
   }
+  class(result) <- "mixdir"
   result
 }
 
