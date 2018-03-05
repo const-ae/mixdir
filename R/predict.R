@@ -71,30 +71,28 @@ predict_class <- function(X, lambda, category_prob){
 
 #' Find the top predictive features and values for each latent class
 #'
-#' @param lambda a vector of probabilities for each category.
-#' @param category_prob a list of a list of a named vector with probabilties
-#'   for each feature, latent class and possible category. This
-#'   is usually handed over from the result of a call to \code{mixdir()}
+#' @param mixdir_obj the result from a call to \code{mixdir()}. It needs to have the
+#'   fields lambda and category_prob. lambda a vector of probabilities for each category.
+#'   category_prob a list of a list of a named vector with probabilties
+#'   for each feature, latent class and possible category.
 #' @param top_n the number of top answers per category that will be returned. Default: 10.
 #'
-#' @return A data frame with four columns: column, category, class and probabilty.
+#' @return A data frame with four columns: column, answer, class and probabilty.
 #'   The probability column contains the chance that an observation belongs to
 #'   the latent class if all that is known about that observation that
 #'   \code{`column`=`category`}
 #'
+#' @seealso find_typical_features
 #' @examples
 #'   data("mushroom")
 #'   res <- mixdir(mushroom[1:30, ], beta=1)
-#'   find_predictive_features(res$lambda, res$category_prob, top_n=3)
+#'   find_predictive_features(res, top_n=3)
 #'
 #' @export
-find_predictive_features <- function(x, ...){
-  UseMethod("find_predictive_features", x)
-}
+find_predictive_features <- function(mixdir_obj, top_n=10){
 
-#' @describeIn find_predictive_features find predictive features for generic combinations
-#'   of a vector lambda and a list category_prob
-find_predictive_features.default <- function(lambda, category_prob, top_n=10){
+  lambda <- mixdir_obj$lambda
+  category_prob <- mixdir_obj$category_prob
 
   categories <- lapply(category_prob, function(x) names(x[[1]]))
   cat_length <- sapply(categories, length)
@@ -118,10 +116,91 @@ find_predictive_features.default <- function(lambda, category_prob, top_n=10){
   }))
 }
 
-#' @describeIn find_predictive_features find_predictive_features find predictive features for
-#'   an object of class mixdir
-find_predictive_features.mixdir <- function(mixdir_obj, top_n=3){
-  find_predictive_features(mixdir_obj$lambda, mixdir_obj$category_prob, top_n=top_n)
+
+
+
+#' Find the most typical features and values for each latent class
+#'
+#' @param mixdir_obj the result from a call to \code{mixdir()}. It needs to have the
+#'   fields lambda and category_prob. lambda a vector of probabilities for each category.
+#'   category_prob a list of a list of a named vector with probabilties
+#'   for each feature, latent class and possible category.
+#' @param top_n the number of top answers per category that will be returned. Default: 10.
+#'
+#' @return A data frame with four columns: column, answer, class and probabilty.
+#'   The probability column contains the chance to see the answer in that column.
+#'
+#' @seealso find_predictive_features
+#' @examples
+#'   data("mushroom")
+#'   res <- mixdir(mushroom[1:30, ], beta=1)
+#'   find_typical_features(res, top_n=3)
+#'
+#' @export
+find_typical_features <- function(mixdir_obj, top_n=10){
+
+  lambda <- mixdir_obj$lambda
+  category_prob <- mixdir_obj$category_prob
+
+  categories <- lapply(category_prob, function(x) names(x[[1]]))
+  cat_length <- sapply(categories, length)
+  all_columns <- unlist(sapply(seq_along(categories), function(i) rep(names(categories[i]), cat_length[i])))
+  all_responses <- unlist(categories)
+  stopifnot(length(all_columns) == length(all_responses))
+  probabilites <- sapply(seq_along(all_responses), function(i){
+    sapply(seq_along(lambda), function(k) category_prob[[all_columns[i]]][[k]][all_responses[i]])
+  })
+
+  rep_factor <- if(is.matrix(probabilites)) nrow(probabilites) else 1
+  result <- data.frame(column=rep(all_columns, each=rep_factor),
+                       answer=rep(all_responses, each=rep_factor),
+                       class=1:rep_factor,
+                       probability=c(probabilites),
+                       stringsAsFactors = FALSE)
+
+  result <- result[order(- result$probability), ]
+  do.call(rbind, lapply(order(-lambda), function(k){
+    tmp <- result[result$class == k, ]
+    tmp[1:min(top_n, nrow(tmp)), ]
+  }))
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

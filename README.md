@@ -86,40 +86,53 @@ pheatmap::pheatmap(result$class_prob, cluster_cols=FALSE,
 purrr::map(result$category_prob, 1)
 #> $bruises
 #>      bruises           no 
-#> 0.9996447887 0.0003552113 
+#> 0.9998223256 0.0001776744 
 #> 
 #> $`cap-color`
 #>        brown         gray          red        white       yellow 
-#> 0.0003548468 0.0003592167 0.0003548906 0.4077977750 0.5911332709 
+#> 0.0001775934 0.0001819672 0.0001776373 0.4079822666 0.5914805356 
 #> 
 #> $`cap-shape`
-#>         bell       convex         flat       sunken 
-#> 0.3925723193 0.4765681327 0.1305046002 0.0003549479 
+#>      bell    convex      flat    sunken 
+#> 0.3926736 0.4767291 0.1304197 0.0001776 
 #> 
 #> $`cap-surface`
-#>    fibrous      scaly     smooth 
-#> 0.05700435 0.48705770 0.45593795 
+#>   fibrous     scaly    smooth 
+#> 0.0568571 0.4871396 0.4560033 
 #> 
 #> $edible
 #>       edible    poisonous 
-#> 0.9996447805 0.0003552195
+#> 0.9998223174 0.0001776826
 
 # The most predicitive features for each class
-find_predictive_features(result$lambda, result$category_prob, top_n=3)
+find_predictive_features(result, top_n=3)
 #>       column    answer class probability
-#> 19 cap-color    yellow     1   0.9988010
-#> 22 cap-shape      bell     1   0.9981940
-#> 1    bruises   bruises     1   0.7089829
-#> 48    edible poisonous     3   0.9961025
-#> 15 cap-color       red     3   0.7498975
-#> 9  cap-color     brown     3   0.6468097
-#> 5    bruises        no     2   0.9980757
-#> 11 cap-color      gray     2   0.9957144
-#> 32 cap-shape    sunken     2   0.9873503
+#> 19 cap-color    yellow     1   0.9993991
+#> 22 cap-shape      bell     1   0.9990948
+#> 1    bruises   bruises     1   0.7090146
+#> 48    edible poisonous     3   0.9980459
+#> 15 cap-color       red     3   0.8461489
+#> 9  cap-color     brown     3   0.6471848
+#> 5    bruises        no     2   0.9990367
+#> 11 cap-color      gray     2   0.9978226
+#> 32 cap-shape    sunken     2   0.9936185
 # For example: if all I know about a mushroom is that it has a
 # yellow cap, then I am 99% certain that it will be in class 1
 predict_class(c(`cap-color`="yellow"), result$lambda, result$category_prob)
-#> [1] 0.9988009540 0.0005996516 0.0005993944
+#> [1] 0.9993990695 0.0003005332 0.0003003973
+
+# Note the most predictive features are different from the most typical ones
+find_typical_features(result, top_n=3)
+#>         column  answer class probability
+#> 1      bruises bruises     1   0.9998223
+#> 43      edible  edible     1   0.9998223
+#> 19   cap-color  yellow     1   0.5914805
+#> 3      bruises bruises     3   0.9995546
+#> 27   cap-shape  convex     3   0.7460615
+#> 9    cap-color   brown     3   0.6746224
+#> 44      edible  edible     2   0.9995310
+#> 5      bruises      no     2   0.9713177
+#> 35 cap-surface fibrous     2   0.7355413
 
 # Convergence
 plot(result$convergence, main=paste0("ELBO: ", formatC(result$ELBO, digits = 3)))
