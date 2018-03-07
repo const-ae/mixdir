@@ -78,6 +78,13 @@ mixdir <- function(X,
     col
   })
   categories <- lapply(1:ncol(X), function(j)levels(X[, j]))
+
+  # Check for empty category. That would make problems
+  cat_lengths <- sapply(categories, length)
+  if(any(cat_lengths == 0)) {
+    stop("Column ", paste0(colnames(X)[cat_lengths == 0], collapse = ","), " is empty (i.e. all values are NA). Please fix this.")
+  }
+
   X[colnames(X)] <- lapply(X[colnames(X)], function(col) as.numeric(col))
   X <- as.matrix(X)
 
