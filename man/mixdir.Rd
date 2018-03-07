@@ -6,7 +6,7 @@
 \usage{
 mixdir(X, n_latent = 3, alpha = NULL, beta = NULL,
   select_latent = FALSE, max_iter = 100, epsilon = 0.001,
-  na.handle = c("ignore", "category"), repetions = 1, ...)
+  na.handle = c("ignore", "category"), repetitions = 1, ...)
 }
 \arguments{
 \item{X}{A matrix or data.frame of size (N_ind x N_quest) that contains the categorical responses.}
@@ -34,7 +34,7 @@ with alpha=c(a1, a2) and beta). Default: FALSE.}
 the string "NA" and treated as their own category. If it is "ignore" the \code{NA}'s are treated as missing completely
 at random and are ignored during the parameter updates.}
 
-\item{repetions}{A number specifying how often to repeat the calculation with different initializations. Automatically
+\item{repetitions}{A number specifying how often to repeat the calculation with different initializations. Automatically
 selects the best run (i.e. max(ELBO)). Default: 1.}
 
 \item{...}{Additional parameters passed on to the underlying functions. The parameters are verbose, phi_init,

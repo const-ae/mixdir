@@ -95,7 +95,7 @@ test_that("mixdir can handle missing values as category", {
 test_that("mixdir repetitions selects the best run", {
   X <- create_data()
   set.seed(1)
-  result <- mixdir(X, n_latent=10, select_latent = TRUE, repetions = 3)
+  result <- mixdir(X, n_latent=10, select_latent = TRUE, repetitions = 3)
 
   set.seed(1)
   result1 <- mixdir(X, n_latent=10, select_latent = TRUE)
