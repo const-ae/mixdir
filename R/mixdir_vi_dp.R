@@ -43,7 +43,16 @@ mixdir_vi_dp <- function(X, n_latent, alpha, beta, categories, max_iter, epsilon
       # names(x) <- categories[[j]]
       x
     }))
+  }else{
+    for(k in 1:n_latent){
+      phi_init_elem_lengths <- sapply(phi_init, function(x) length(x[[k]]))
+      if(! all(phi_init_elem_lengths == sapply(categories, length))){
+        stop(paste0("phi_init has the wrong number of elements for feature: ",
+                    paste0(which(phi_init_elem_lengths != sapply(categories, length)), collapse = ", ")))
+      }
+    }
   }
+
   kappa1 <-kappa1_init
   kappa2 <-kappa2_init
   zeta <- zeta_init
