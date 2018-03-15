@@ -1,14 +1,15 @@
 
 
 
-#' Run mixture of Dirichlet model
+#' Run mixdir model
 #'
 #' @param X A matrix or data.frame of size (N_ind x N_quest) that contains the categorical responses.
-#' @param n_latent The number of latent factors that are used to approximate the model.
+#'   The values can be characters, integers or factors. The most flexibility is provided if factors are used.
+#' @param n_latent The number of latent factors that are used to approximate the model. Default: 3.
 #' @param alpha A single number or a vector of two numbers in case select_latent=TRUE. If it is NULL alpha
 #'   is initialized to 1. It serves as prior for the Dirichlet distributions over the latent groups. They
 #'   serve as pseudo counts of individuals per group.
-#' @param beta A single number. If it is NULL alpha is initialized to 0.1.
+#' @param beta A single number. If it is NULL beta is initialized to 0.1.
 #'   It serves as a prior for the Dirichlet distributions over the categorical responses. Large numbers
 #'   favor an equal distribution of responses for a question of the individuals in the same latent group,
 #'   small numbers indicate that indiviudals of the same latent group usually answer a question the same way.
@@ -18,12 +19,31 @@
 #' @param max_iter The maximum number of iterations.
 #' @param epsilon A number that indicates the numerical precision necessary to consider the algorithm converged.
 #' @param na.handle Either "ignore" or "category". If it is "category" all \code{NA}'s in the dataset are converted to
-#'   the string "NA" and treated as their own category. If it is "ignore" the \code{NA}'s are treated as missing completely
+#'   the string "(Missing)" and treated as their own category. If it is "ignore" the \code{NA}'s are treated as missing completely
 #'   at random and are ignored during the parameter updates.
 #' @param repetitions A number specifying how often to repeat the calculation with different initializations. Automatically
 #'   selects the best run (i.e. max(ELBO)). Default: 1.
 #' @param ... Additional parameters passed on to the underlying functions. The parameters are verbose, phi_init,
 #'   zeta_init and if select_latent=FALSE omega_init or if select_latent=TRUE kappa1_init and kappa2_init.
+#'
+#' @return A list that is tagged with the class "mixdir" containing 8 elements:
+#'   \describe{
+#'     \item{converged}{a boolean indicator if the model has converged}
+#'     \item{ELBO}{a numerical vector with the ELBO of each iteration}
+#'     \item{lambda}{a numerical vector with the \code{n_latent} class probabilies}
+#'     \item{pred_class}{an integer vector with the the most likely class assignment
+#'        for each individual.}
+#'     \item{class_prob}{a matrix of size \code{n_ind x n_latent} which has for each
+#'       individual the probabiltiy to belong to class k.}
+#'     \item{category_prob}{a list with one entry for each feature (i.e. column of X).
+#'       Each entry is again a list with one entry for each class, that contains the
+#'       probability of individuals of that class to answer with a specific response.}
+#'     \item{specific_params}{A list whose content depends on the parameter \code{select_latent}.
+#'       If \code{select_latent=FALSE} it contains the two entries omega and phi which
+#'       are the Dirichlet hyperparameters that the model has fitted. If \code{select_latent=TRUE}
+#'       it contains kappa1, kappa2 and phi, which are the hyperparameters for the
+#'       Dirichlet Process and the Dirichlet of the answer.}
+#'   }
 #'
 #' @details The function uses a mixture of multinomials to fit the model.
 #'   The full model specification is
@@ -39,6 +59,10 @@
 #'   The initial inspiration came from  Dunson and Xing (2009) who proposed a Gibbs
 #'   sampling algorithm to solve this model. To speed up inference
 #'   a variational inference approach was derived and implemented in this package.
+#'
+#' @examples
+#'   data("mushroom")
+#'   res <- mixdir(mushroom[1:30, ])
 #'
 #' @references
 #'  1. Dunson, D. B. & Xing, C. Nonparametric Bayes Modeling of Multivariate Categorical Data. J. Am. Stat. Assoc. 104, 1042–1051 (2009).
