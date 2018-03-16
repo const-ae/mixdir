@@ -10,7 +10,7 @@ output:
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "README_plots/"
+  fig.path = "man/figures/README_plots/"
 )
 ```
 
@@ -36,7 +36,7 @@ devtools::install_github("const-ae/mixdir")
 
 Clustering the [mushroom](https://archive.ics.uci.edu/ml/datasets/mushroom) data set.
 
-![](README_plots/clustering_overview.png)
+![](man/figures/README_plots/clustering_overview.png)
 
 ```{r example_load}
 # Loading the library and the data
@@ -92,11 +92,11 @@ plot(result$convergence, main=paste0("ELBO: ", formatC(result$ELBO, digits = 3))
 The package implements a variational inference algorithm to solve a Bayesian latent class model (LCM). 
 
 
-<div class="figure"><img src="README_plots/equations_model.png" align="center" style="height: 150px" ></div>
+<div class="figure"><img src="man/figures/README_plots/equations_model.png" align="center" style="height: 150px" ></div>
 
 
 
-![](README_plots/model_plate_notation.png)
+![](man/figures/README_plots/model_plate_notation.png)
 
 
 ___

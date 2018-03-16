@@ -23,7 +23,7 @@ Example
 
 Clustering the [mushroom](https://archive.ics.uci.edu/ml/datasets/mushroom) data set.
 
-![](README_plots/clustering_overview.png)
+![](man/figures/README_plots/clustering_overview.png)
 
 ``` r
 # Loading the library and the data
@@ -77,7 +77,7 @@ pheatmap::pheatmap(result$class_prob, cluster_cols=FALSE,
                   labels_col = paste("Class", 1:3))
 ```
 
-![](README_plots/example-1.png)
+![](man/figures/README_plots/example-1.png)
 
 ``` r
 
@@ -138,16 +138,16 @@ find_typical_features(result, top_n=3)
 plot(result$convergence, main=paste0("ELBO: ", formatC(result$ELBO, digits = 3)))
 ```
 
-![](README_plots/example-2.png)
+![](man/figures/README_plots/example-2.png)
 
 Underlying Model
 ================
 
 The package implements a variational inference algorithm to solve a Bayesian latent class model (LCM).
 
-<img src="README_plots/equations_model.png" align="center" style="height: 150px" >
+<img src="man/figures/README_plots/equations_model.png" align="center" style="height: 150px" >
 
-![](README_plots/model_plate_notation.png)
+![](man/figures/README_plots/model_plate_notation.png)
 
 ------------------------------------------------------------------------
 

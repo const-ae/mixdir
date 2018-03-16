@@ -2,5 +2,3 @@
 ^\.Rproj\.user$
 ^data-raw$
 ^README\.Rmd$
-^README_plots$
-^README_plots/*\.png$
