@@ -45,7 +45,8 @@ zeta_init and if select_latent=FALSE omega_init or if select_latent=TRUE kappa1_
 A list that is tagged with the class "mixdir" containing 8 elements:
   \describe{
     \item{converged}{a boolean indicator if the model has converged}
-    \item{ELBO}{a numerical vector with the ELBO of each iteration}
+    \item{convergence}{a numerical vector with the ELBO of each iteration}
+    \item{ELBO}{the final ELBO of the converged model}
     \item{lambda}{a numerical vector with the \code{n_latent} class probabilities}
     \item{pred_class}{an integer vector with the the most likely class assignment
        for each individual.}
