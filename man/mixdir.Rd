@@ -2,7 +2,7 @@
 % Please edit documentation in R/mixdir.R
 \name{mixdir}
 \alias{mixdir}
-\title{Run mixdir model}
+\title{Cluster high dimensional categorical datasets}
 \usage{
 mixdir(X, n_latent = 3, alpha = NULL, beta = NULL,
   select_latent = FALSE, max_iter = 100, epsilon = 0.001,
@@ -62,7 +62,7 @@ A list that is tagged with the class "mixdir" containing 8 elements:
   }
 }
 \description{
-Run mixdir model
+Cluster high dimensional categorical datasets
 }
 \details{
 The function uses a mixture of multinomials to fit the model.

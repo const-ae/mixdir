@@ -1,7 +1,7 @@
 
 
 
-#' Run mixdir model
+#' Cluster high dimensional categorical datasets
 #'
 #' @param X A matrix or data.frame of size (N_ind x N_quest) that contains the categorical responses.
 #'   The values can be characters, integers or factors. The most flexibility is provided if factors are used.

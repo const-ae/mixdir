@@ -1,12 +1,14 @@
 Package: mixdir
 Type: Package
-Title: Dimensionality Reduction for Categorical Data
+Title: Cluster High Dimensional Categorical Datasets
 Version: 0.1.0
 Authors@R: person("Constantin", "Ahlmann-Eltze", email = "artjom31415@googlemail.com", role = c("aut", "cre"))
-Description: The package implements a hierarchical Dirichlet mixture of Dirichlet distributions.
-    It can be used to reduce the dimensionality of hierarchical data, cluster individuals or decompose 
-    probability tensors. The model is based on a paper by Dunson and Xing (2009), but implements a scalable
-    variational inference algorithm so that it is applicable to large datasets.
+Description: Scalable Bayesian clustering of categorical datasets. The package implements a hierarchical Dirichlet 
+    (Process) mixture  of multinomial distributions. It is thus a probabilistic latent class model (LCM) and can be used
+    to reduce the  dimensionality of hierarchical data and cluster individuals into latent classes. It can automatically
+    infer an approriate number of latent classes or find k classes, as defined by the user.  The model is based on a
+    paper by Dunson and Xing (2009), but implements a scalable variational inference algorithm so that it is
+    applicable to large datasets.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
