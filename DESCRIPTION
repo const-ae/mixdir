@@ -6,7 +6,7 @@ Authors@R: person("Constantin", "Ahlmann-Eltze", email = "artjom31415@googlemail
 Description: Scalable Bayesian clustering of categorical datasets. The package implements a hierarchical Dirichlet 
     (Process) mixture  of multinomial distributions. It is thus a probabilistic latent class model (LCM) and can be used
     to reduce the  dimensionality of hierarchical data and cluster individuals into latent classes. It can automatically
-    infer an approriate number of latent classes or find k classes, as defined by the user.  The model is based on a
+    infer an appropriate number of latent classes or find k classes, as defined by the user.  The model is based on a
     paper by Dunson and Xing (2009), but implements a scalable variational inference algorithm so that it is
     applicable to large datasets.
 License: GPL-3

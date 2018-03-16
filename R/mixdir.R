@@ -12,9 +12,9 @@
 #' @param beta A single number. If it is NULL beta is initialized to 0.1.
 #'   It serves as a prior for the Dirichlet distributions over the categorical responses. Large numbers
 #'   favor an equal distribution of responses for a question of the individuals in the same latent group,
-#'   small numbers indicate that indiviudals of the same latent group usually answer a question the same way.
+#'   small numbers indicate that individuals of the same latent group usually answer a question the same way.
 #' @param select_latent A boolean that indicates if the exact number n_latent should be used or if a Dirichlet
-#'   Process prior is used that shrinkes the number of used latent variables appropriately (can be controlled
+#'   Process prior is used that shrinks the number of used latent variables appropriately (can be controlled
 #'   with alpha=c(a1, a2) and beta). Default: FALSE.
 #' @param max_iter The maximum number of iterations.
 #' @param epsilon A number that indicates the numerical precision necessary to consider the algorithm converged.
@@ -30,11 +30,11 @@
 #'   \describe{
 #'     \item{converged}{a boolean indicator if the model has converged}
 #'     \item{ELBO}{a numerical vector with the ELBO of each iteration}
-#'     \item{lambda}{a numerical vector with the \code{n_latent} class probabilies}
+#'     \item{lambda}{a numerical vector with the \code{n_latent} class probabilities}
 #'     \item{pred_class}{an integer vector with the the most likely class assignment
 #'        for each individual.}
 #'     \item{class_prob}{a matrix of size \code{n_ind x n_latent} which has for each
-#'       individual the probabiltiy to belong to class k.}
+#'       individual the probability to belong to class k.}
 #'     \item{category_prob}{a list with one entry for each feature (i.e. column of X).
 #'       Each entry is again a list with one entry for each class, that contains the
 #'       probability of individuals of that class to answer with a specific response.}

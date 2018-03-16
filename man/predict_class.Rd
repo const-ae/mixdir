@@ -13,7 +13,7 @@ available.}
 
 \item{lambda}{a vector of probabilities for each category.}
 
-\item{category_prob}{a list of a list of a named vector with probabilties
+\item{category_prob}{a list of a list of a named vector with probabilities
 for each answer, latent class and possible category. This
 is usually handed over from the result of a call to \code{mixdir()}}
 }

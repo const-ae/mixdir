@@ -6,7 +6,7 @@
 #'   Values can be missing or it can just be the values for which data is
 #'   available.
 #' @param lambda a vector of probabilities for each category.
-#' @param category_prob a list of a list of a named vector with probabilties
+#' @param category_prob a list of a list of a named vector with probabilities
 #'   for each answer, latent class and possible category. This
 #'   is usually handed over from the result of a call to \code{mixdir()}
 #'
@@ -73,11 +73,11 @@ predict_class <- function(X, lambda, category_prob){
 #'
 #' @param mixdir_obj the result from a call to \code{mixdir()}. It needs to have the
 #'   fields lambda and category_prob. lambda a vector of probabilities for each category.
-#'   category_prob a list of a list of a named vector with probabilties
+#'   category_prob a list of a list of a named vector with probabilities
 #'   for each feature, latent class and possible category.
 #' @param top_n the number of top answers per category that will be returned. Default: 10.
 #'
-#' @return A data frame with four columns: column, answer, class and probabilty.
+#' @return A data frame with four columns: column, answer, class and probability.
 #'   The probability column contains the chance that an observation belongs to
 #'   the latent class if all that is known about that observation that
 #'   \code{`column`=`category`}
@@ -123,11 +123,11 @@ find_predictive_features <- function(mixdir_obj, top_n=10){
 #'
 #' @param mixdir_obj the result from a call to \code{mixdir()}. It needs to have the
 #'   fields lambda and category_prob. lambda a vector of probabilities for each category.
-#'   category_prob a list of a list of a named vector with probabilties
+#'   category_prob a list of a list of a named vector with probabilities
 #'   for each feature, latent class and possible category.
 #' @param top_n the number of top answers per category that will be returned. Default: 10.
 #'
-#' @return A data frame with four columns: column, answer, class and probabilty.
+#' @return A data frame with four columns: column, answer, class and probability.
 #'   The probability column contains the chance to see the answer in that column.
 #'
 #' @seealso find_predictive_features

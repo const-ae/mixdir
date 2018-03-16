@@ -9,13 +9,13 @@ find_typical_features(mixdir_obj, top_n = 10)
 \arguments{
 \item{mixdir_obj}{the result from a call to \code{mixdir()}. It needs to have the
 fields lambda and category_prob. lambda a vector of probabilities for each category.
-category_prob a list of a list of a named vector with probabilties
+category_prob a list of a list of a named vector with probabilities
 for each feature, latent class and possible category.}
 
 \item{top_n}{the number of top answers per category that will be returned. Default: 10.}
 }
 \value{
-A data frame with four columns: column, answer, class and probabilty.
+A data frame with four columns: column, answer, class and probability.
   The probability column contains the chance to see the answer in that column.
 }
 \description{
