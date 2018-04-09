@@ -12,11 +12,8 @@
 #'   NA.
 #' @param ... currently unused
 #'
-#' @details Usually the \code{lambda} and \code{category_prob} from a call to
-#'   \code{mixdir()} are used.
 #'
-#' @return A vector of \code{length(lambda)} with the probability that \code{X}
-#'   is in that latent class.
+#' @return A matrix of with the same number of rows as the input and one column for each latent class.
 #'
 #' @examples
 #'   data("mushroom")
