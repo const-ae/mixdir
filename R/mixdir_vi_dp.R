@@ -139,6 +139,13 @@ mixdir_vi_dp <- function(X, n_latent, alpha, beta, categories, max_iter, epsilon
     }
   }
 
+  # A last update of omega
+  kappa1 <- alpha1 + colSums(zeta)
+  ### q(z_i > t)
+  summed_up_phi <- t(apply(zeta, 1, function(row) c(rev(cumsum(rev(row))), 0)))[, 2:(n_latent+1)]
+  kappa2 <- alpha2 + colSums(summed_up_phi)
+
+  # Calculate lambda
   nu <- kappa1/(kappa1 + kappa2)
   lambda <- sapply(1:n_latent, function(k){
     nu[k] * (if(k > 1) prod((1-nu[1:(k-1)])) else 1)
@@ -149,13 +156,21 @@ mixdir_vi_dp <- function(X, n_latent, alpha, beta, categories, max_iter, epsilon
             Consider re-running the model with an increased number of latent categories.")
   }
 
+  # Calculate consistent prob_z
+  prob_z <- matrix(vapply(seq_along(lambda), function(k){
+    lambda[k] * exp(rowSums(log(matrix(vapply(colnames(X), function(j){
+      ifelse(is.na(X[ ,j]), 1, U[[j]][[k]][X[, j]])
+    }, FUN.VALUE=rep(0.0, times=n_ind)), nrow=n_ind))))
+  }, FUN.VALUE=rep(0.0, times=n_ind)), nrow=n_ind)
+  prob_z <- prob_z / rowSums(prob_z)
+
   list(
     converged=converged,
     convergence=elbo_hist,
     ELBO=elbo,
     lambda=lambda,
-    pred_class=apply(zeta, 1, which.max),
-    class_prob=zeta,
+    pred_class=apply(prob_z, 1, which.max),
+    class_prob=prob_z,
     category_prob=U,
     specific_params=list(
       kappa1=kappa1,

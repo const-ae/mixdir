@@ -2,13 +2,15 @@
 
 #' Predict the class of a new observation.
 #'
-#' @param X a named vector of responses for which to predict the latent class.
-#'   Values can be missing or it can just be the values for which data is
-#'   available.
-#' @param lambda a vector of probabilities for each category.
-#' @param category_prob a list of a list of a named vector with probabilities
-#'   for each answer, latent class and possible category. This
-#'   is usually handed over from the result of a call to \code{mixdir()}
+#' @param object the result from a call to \code{mixdir()}. It needs to have the
+#'   fields lambda and category_prob. lambda is a vector of probabilities for each category.
+#'   category_prob a list of a list of a named vector with probabilities
+#'   for each feature, latent class and possible category.
+#' @param newdata a named vector with a single new observation or a data.frame
+#'   with the same structure as the original data used for fitting the model.
+#'   Missing features or features not encountered during training are replaced by
+#'   NA.
+#' @param ... currently unused
 #'
 #' @details Usually the \code{lambda} and \code{category_prob} from a call to
 #'   \code{mixdir()} are used.
@@ -23,48 +25,76 @@
 #'   res <- mixdir(X)
 #'
 #'   # Predict Class
-#'   predict_class(mushroom[40, ], res$lambda, res$category_prob)
-#'   predict_class(c(`gill-color`="black"), res$lambda, res$category_prob)
+#'   predict(res, mushroom[40:45, ])
+#'   predict(res, c(`gill-color`="black"))
 #' @export
+predict.mixdir <- function(object, newdata, ...){
+  if (missing(newdata) || is.null(newdata)) {
+    object$class_prob
+  }else{
+    predict_class(newdata, object$lambda, object$category_prob)
+  }
+
+}
+
+
 predict_class <- function(X, lambda, category_prob){
 
   # Cleaning parameters
-  if((inherits(X, "matrix") || inherits(X, "data.frame")) && nrow(X) != 1){
-    stop("Can only handle arguments X as matrix or data.frame if it has 1 row")
-  }
-  if(inherits(X, "matrix") && nrow(X) == 1){
-    tmp <- c(X[1, ])
-    names(tmp) <- colnames(X)
+
+  ## Convert X to standardized data.frame of characters
+  categories <- lapply(category_prob, function(cat) names(cat[[1]]))
+  if(is.vector(X)){
+    tmp <- as.data.frame(as.list(X), stringsAsFactors = FALSE)
+    names(tmp) <- names(X)
     X <- tmp
-  }else if(inherits(X, "data.frame") && nrow(X) == 1){
-    tmp <- unlist(X[1, ])
-    names(tmp) <- colnames(X)
+  }else if(is.list(X)){
+    tmp <- as.data.frame(X, stringsAsFactors = FALSE)
+    names(tmp) <- names(X)
+    X <- tmp
+  }else if(is.matrix(X)){
+    tmp <- as.data.frame(X, stringsAsFactors = FALSE)
+    names(tmp) <- names(X)
     X <- tmp
   }
+  n_ind <- nrow(X)
+  X <- lapply(names(categories), function(coln){
+    vec <- X[[coln]]
+    if(is.null(vec)){
+      vec <- as.character(rep(NA, n_ind))
+    }else{
+      vec <- as.character(vec)
+      pos_cats <- categories[[coln]]
+      non_matches <- which(!vec %in% pos_cats & ! is.na(vec))
+      if(length(non_matches) > 0){
+        warning(paste0("The new data has a response (",
+                       paste0("\"", unique(vec[non_matches]), "\"", collapse = ","),
+                       ") for category \"", coln, "\" which is not in category_prob. ",
+                       "Handling X[j, i] it as if it was missing.\n"))
+        vec[non_matches] <- NA
+      }
+    }
+    vec
+  })
+  X <- as.data.frame(X, stringsAsFactors=FALSE)
+  colnames(X) <- names(categories)
 
-  prob_z <- sapply(seq_along(lambda), function(k){
-
-
+  prob_z <- matrix(vapply(seq_along(lambda), function(k){
     ## p(\lambda|alpha) doesn't matter, because it is the same everywhere
     ## p(z | lambda)
     p_z_lambda <- lambda[k]
     ## p(U_{j,k}|beta) doesn't matter, because it is the same everywhere
     ## p(X_{i,j}|U_j,z)
-    p_x_u <- prod(sapply(names(X), function(j){
-      if(! j %in% names(category_prob))
+    p_x_u <- exp(rowSums(log(matrix(vapply(colnames(X), function(j){
+      if(! j %in% names(categories))
         stop(paste0("The new observation X contains a category ", j, " not in the data"))
-      if(! X[j] %in% names(category_prob[[j]][[k]])){
-        if(k == 1) warning(paste0("The new observation has a response (", X[j], ") for category ", j, " which is not in category_prob. ",
-                                  "Handling X[j] it as if it was missing."))
-        1
-      }else if(is.na(X[j])) 1
-      else category_prob[[j]][[k]][X[j]]
-    }))
+      ifelse(is.na(X[ ,j]), 1, category_prob[[j]][[k]][X[, j]])
+    }, FUN.VALUE=rep(0.0, times=n_ind)), nrow=n_ind))))
 
     p_z_lambda * p_x_u
-  })
+  }, FUN.VALUE=rep(0.0, times=n_ind)), nrow=n_ind)
 
-  prob_z / sum(prob_z)
+  prob_z / rowSums(prob_z)
 
 }
 

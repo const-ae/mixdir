@@ -110,7 +110,7 @@ test_that("mixdir repetitions selects the best run", {
 
 context("Prediction")
 
-test_that("prediction of class works", {
+test_that("predict_class works", {
 
   data("mushroom")
   res <- mixdir(mushroom[1:30, ])
@@ -127,6 +127,45 @@ test_that("prediction of class works", {
   expect_silent(predict_class(mushroom[42, ], res2$lambda, res2$category_prob))
 })
 
+test_that("predict.mixdir works", {
+  data("mushroom")
+  res <- mixdir(mushroom[1:30, ])
+
+  # Predict Class
+  expect_silent(predict(res, mushroom[40, ]))
+  expect_silent(predict(res, c(`gill-color`="black")))
+  expect_warning(predict(res, mushroom[42, ]))
+
+  # If all are NA, expect same values as lambda
+  expect_equal(res$lambda, c(predict(res, c(`edible`=NA))))
+
+  # expect that the prediction for a value equals the current class_prob
+  expect_equal(res$class_prob, predict(res))
+  expect_equal(res$class_prob, predict(res, mushroom[1:30, ]))
+  # Well they are not equal but close enough.
+  # expect_equal(res$lambda, colSums(res$class_prob)/30)
+
+})
+
+test_that("predict.mixdir works with DP", {
+  data("mushroom")
+  res <- mixdir(mushroom[1:30, ], n_latent=10, select_latent = TRUE)
+
+  # Predict Class
+  expect_silent(predict(res, mushroom[40, ]))
+  expect_silent(predict(res, c(`gill-color`="black")))
+  expect_warning(predict(res, mushroom[42, ]))
+
+  # If all are NA, expect same values as lambda
+  expect_equal(res$lambda, c(predict(res, c(`edible`=NA)) * sum(res$lambda)))
+
+  # expect that the prediction for a value equals the current class_prob
+  expect_equal(res$class_prob, predict(res))
+  expect_equal(res$class_prob, predict(res, mushroom[1:30, ]))
+  # Well they are not equal but close enough.
+  # expect_equal(res$lambda, colSums(res$class_prob)/30)
+
+})
 
 
 test_that("finding the most representative answers works", {

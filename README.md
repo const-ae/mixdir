@@ -63,16 +63,16 @@ head(result$pred_class, n=10)
 # Soft Clustering for first 10 mushrooms
 head(result$class_prob, n=10)
 #>               [,1]         [,2]         [,3]
-#>  [1,] 2.781141e-14 2.915757e-09 1.000000e+00
-#>  [2,] 1.000000e+00 1.286473e-09 4.022864e-08
-#>  [3,] 1.000000e+00 8.483274e-10 3.020595e-08
-#>  [4,] 1.734041e-07 1.173963e-11 9.999998e-01
-#>  [5,] 4.078317e-14 1.000000e+00 4.873989e-14
-#>  [6,] 9.999999e-01 1.450405e-11 1.053419e-07
-#>  [7,] 1.000000e+00 8.483274e-10 3.020595e-08
-#>  [8,] 9.999999e-01 9.564273e-12 7.909668e-08
-#>  [9,] 1.734041e-07 1.173963e-11 9.999998e-01
-#> [10,] 1.000000e+00 4.799899e-16 8.694462e-15
+#>  [1,] 3.103495e-07 1.055098e-05 9.999891e-01
+#>  [2,] 9.998594e-01 4.683764e-06 1.359291e-04
+#>  [3,] 9.998944e-01 3.111462e-06 1.025194e-04
+#>  [4,] 5.778033e-04 7.114603e-08 9.994221e-01
+#>  [5,] 3.662625e-07 9.999992e-01 4.183025e-07
+#>  [6,] 9.996461e-01 8.764031e-08 3.537838e-04
+#>  [7,] 9.998944e-01 3.111462e-06 1.025194e-04
+#>  [8,] 9.997331e-01 5.822320e-08 2.668420e-04
+#>  [9,] 5.778033e-04 7.114603e-08 9.994221e-01
+#> [10,] 9.999999e-01 5.850067e-09 9.845112e-08
 pheatmap::pheatmap(result$class_prob, cluster_cols=FALSE,
                   labels_col = paste("Class", 1:3))
 ```
@@ -107,19 +107,20 @@ purrr::map(result$category_prob, 1)
 # The most predicitive features for each class
 find_predictive_features(result, top_n=3)
 #>       column    answer class probability
-#> 19 cap-color    yellow     1   0.9993991
-#> 22 cap-shape      bell     1   0.9990948
-#> 1    bruises   bruises     1   0.7090146
-#> 48    edible poisonous     3   0.9980459
-#> 15 cap-color       red     3   0.8461489
-#> 9  cap-color     brown     3   0.6471848
-#> 5    bruises        no     2   0.9990367
-#> 11 cap-color      gray     2   0.9978226
-#> 32 cap-shape    sunken     2   0.9936185
+#> 19 cap-color    yellow     1   0.9993990
+#> 22 cap-shape      bell     1   0.9990947
+#> 1    bruises   bruises     1   0.7089533
+#> 48    edible poisonous     3   0.9980468
+#> 15 cap-color       red     3   0.8462032
+#> 9  cap-color     brown     3   0.6473043
+#> 5    bruises        no     2   0.9990364
+#> 11 cap-color      gray     2   0.9978218
+#> 32 cap-shape    sunken     2   0.9936162
 # For example: if all I know about a mushroom is that it has a
 # yellow cap, then I am 99% certain that it will be in class 1
-predict_class(c(`cap-color`="yellow"), result$lambda, result$category_prob)
-#> [1] 0.9993990695 0.0003005332 0.0003003973
+predict(result, c(`cap-color`="yellow"))
+#>          [,1]         [,2]         [,3]
+#> [1,] 0.999399 0.0003004692 0.0003004907
 
 # Note the most predictive features are different from the most typical ones
 find_typical_features(result, top_n=3)

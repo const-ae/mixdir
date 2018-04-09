@@ -124,13 +124,24 @@ mixdir_vi <- function(X, n_latent, alpha, beta, categories, max_iter, epsilon,
     }
   }
 
+  omega <- alpha + colSums(zeta)
+  lambda <- omega/sum(omega)
+
+  # Bring the zeta and U to a consistent state (lambda is slightly off)
+  prob_z <- matrix(vapply(seq_along(lambda), function(k){
+    lambda[k] * exp(rowSums(log(matrix(vapply(colnames(X), function(j){
+      ifelse(is.na(X[ ,j]), 1, U[[j]][[k]][X[, j]])
+    }, FUN.VALUE=rep(0.0, times=n_ind)), nrow=n_ind))))
+  }, FUN.VALUE=rep(0.0, times=n_ind)), nrow=n_ind)
+  prob_z <- prob_z / rowSums(prob_z)
+
   list(
     converged=converged,
     convergence=elbo_hist,
     ELBO=elbo,
-    lambda=omega/sum(omega),
-    pred_class=apply(zeta, 1, which.max),
-    class_prob=zeta,
+    lambda=lambda,
+    pred_class=apply(prob_z, 1, which.max),
+    class_prob=prob_z,
     category_prob=U,
     specific_params=list(
       omega=omega,
