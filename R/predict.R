@@ -43,15 +43,15 @@ predict_class <- function(X, lambda, category_prob){
   categories <- lapply(category_prob, function(cat) names(cat[[1]]))
   if(is.vector(X)){
     tmp <- as.data.frame(as.list(X), stringsAsFactors = FALSE)
-    names(tmp) <- names(X)
+    colnames(tmp) <- names(X)
     X <- tmp
   }else if(is.list(X)){
     tmp <- as.data.frame(X, stringsAsFactors = FALSE)
-    names(tmp) <- names(X)
+    colnames(tmp) <- names(X)
     X <- tmp
   }else if(is.matrix(X)){
     tmp <- as.data.frame(X, stringsAsFactors = FALSE)
-    names(tmp) <- names(X)
+    colnames(tmp) <- colnames(X)
     X <- tmp
   }
   n_ind <- nrow(X)
