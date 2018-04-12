@@ -6,7 +6,7 @@
 \usage{
 mixdir(X, n_latent = 3, alpha = NULL, beta = NULL,
   select_latent = FALSE, max_iter = 100, epsilon = 0.001,
-  na.handle = c("ignore", "category"), repetitions = 1, ...)
+  na_handle = c("ignore", "category"), repetitions = 1, ...)
 }
 \arguments{
 \item{X}{A matrix or data.frame of size (N_ind x N_quest) that contains the categorical responses.
@@ -31,7 +31,7 @@ with alpha=c(a1, a2) and beta). Default: FALSE.}
 
 \item{epsilon}{A number that indicates the numerical precision necessary to consider the algorithm converged.}
 
-\item{na.handle}{Either "ignore" or "category". If it is "category" all \code{NA}'s in the dataset are converted to
+\item{na_handle}{Either "ignore" or "category". If it is "category" all \code{NA}'s in the dataset are converted to
 the string "(Missing)" and treated as their own category. If it is "ignore" the \code{NA}'s are treated as missing completely
 at random and are ignored during the parameter updates.}
 
@@ -60,6 +60,8 @@ A list that is tagged with the class "mixdir" containing 8 elements:
       are the Dirichlet hyperparameters that the model has fitted. If \code{select_latent=TRUE}
       it contains kappa1, kappa2 and phi, which are the hyperparameters for the
       Dirichlet Process and the Dirichlet of the answer.}
+    \item{na_handle}{a string indicating the method used to handle missing values. This
+      is important for subsequent calls to \code{predict.mixdir}.}
   }
 }
 \description{

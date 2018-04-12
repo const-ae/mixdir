@@ -18,7 +18,7 @@
 #'   with alpha=c(a1, a2) and beta). Default: FALSE.
 #' @param max_iter The maximum number of iterations.
 #' @param epsilon A number that indicates the numerical precision necessary to consider the algorithm converged.
-#' @param na.handle Either "ignore" or "category". If it is "category" all \code{NA}'s in the dataset are converted to
+#' @param na_handle Either "ignore" or "category". If it is "category" all \code{NA}'s in the dataset are converted to
 #'   the string "(Missing)" and treated as their own category. If it is "ignore" the \code{NA}'s are treated as missing completely
 #'   at random and are ignored during the parameter updates.
 #' @param repetitions A number specifying how often to repeat the calculation with different initializations. Automatically
@@ -44,6 +44,8 @@
 #'       are the Dirichlet hyperparameters that the model has fitted. If \code{select_latent=TRUE}
 #'       it contains kappa1, kappa2 and phi, which are the hyperparameters for the
 #'       Dirichlet Process and the Dirichlet of the answer.}
+#'     \item{na_handle}{a string indicating the method used to handle missing values. This
+#'       is important for subsequent calls to \code{predict.mixdir}.}
 #'   }
 #'
 #' @details The function uses a mixture of multinomials to fit the model.
@@ -79,12 +81,12 @@ mixdir <- function(X,
                    select_latent=FALSE,
                    max_iter=100,
                    epsilon=1e-3,
-                   na.handle=c("ignore", "category"),
+                   na_handle=c("ignore", "category"),
                    repetitions=1,
                    ...){
 
 
-  na.handle <- match.arg(na.handle, c("ignore", "category"))
+  na_handle <- match.arg(na_handle, c("ignore", "category"))
 
 
 
@@ -96,7 +98,7 @@ mixdir <- function(X,
     if(! is.factor(col)){
       col <- as.factor(as.character(col))
     }
-    if(na.handle == "category"){
+    if(na_handle == "category"){
       levels(col) <- c(levels(col), "(Missing)")
       col[is.na(col)] <- "(Missing)"
     }
@@ -128,6 +130,7 @@ mixdir <- function(X,
       result <- result_tmp
     }
   }
+  result$na_handle <- na_handle
   class(result) <- "mixdir"
   result
 }
