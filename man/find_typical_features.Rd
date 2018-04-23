@@ -28,5 +28,5 @@ Find the most typical features and values for each latent class
 
 }
 \seealso{
-find_predictive_features
+\code{\link{find_predictive_features}} \code{\link{find_defining_features}}
 }

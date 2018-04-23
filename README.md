@@ -50,7 +50,7 @@ Calling the clustering function `mixdir` on a subset of the data:
 
 ``` r
 # Clustering into 3 latent classes
-result <- mixdir(mushroom[1:1000, 1:5], n_latent=3)
+result <- mixdir(mushroom[1:1000,  1:5], n_latent=3)
 ```
 
 Analyzing the result
@@ -134,12 +134,29 @@ find_typical_features(result, top_n=3)
 #> 44      edible  edible     2   0.9995310
 #> 5      bruises      no     2   0.9713177
 #> 35 cap-surface fibrous     2   0.7355413
-
-# Convergence
-plot(result$convergence, main=paste0("ELBO: ", formatC(result$ELBO, digits = 3)))
 ```
 
-![](man/figures/README_plots/example-2.png)
+Dimensionality Reduction
+
+``` r
+# Defining Features
+def_feat <- find_defining_features(result, mushroom[1:1000,  1:5], n_features = 3)
+print(def_feat)
+#> $features
+#> [1] "cap-color" "bruises"   "edible"   
+#> 
+#> $quality
+#> [1] 74.35146
+
+# Plotting the most important features gives an immediate impression
+# how the cluster differ
+plot_features(def_feat$features, result$category_prob)
+#> Loading required namespace: ggplot2
+#> Loading required namespace: dplyr
+#> Loading required namespace: tidyr
+```
+
+![](man/figures/README_plots/unnamed-chunk-3-1.png)
 
 Underlying Model
 ================

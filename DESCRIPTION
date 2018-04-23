@@ -17,7 +17,11 @@ Suggests: testthat,
     purrr,
     dplyr,
     rmutil,
-    pheatmap
+    pheatmap,
+    mcclust,
+    ggplot2, 
+    tidyr,
+    utils
 RoxygenNote: 6.0.1
 Imports: extraDistr,
     stats,
