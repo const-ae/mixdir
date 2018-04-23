@@ -52,7 +52,7 @@ Calling the clustering function `mixdir` on a subset of the data:
 
 ```{r}
 # Clustering into 3 latent classes
-result <- mixdir(mushroom[1:1000, 1:5], n_latent=3)
+result <- mixdir(mushroom[1:1000,  1:5], n_latent=3)
 ```
 
 
@@ -79,11 +79,19 @@ predict(result, c(`cap-color`="yellow"))
 
 # Note the most predictive features are different from the most typical ones
 find_typical_features(result, top_n=3)
-
-# Convergence
-plot(result$convergence, main=paste0("ELBO: ", formatC(result$ELBO, digits = 3)))
 ```
 
+Dimensionality Reduction
+
+```{r fig.width=8, fig.asp=0.31}
+# Defining Features
+def_feat <- find_defining_features(result, mushroom[1:1000,  1:5], n_features = 3)
+print(def_feat)
+
+# Plotting the most important features gives an immediate impression
+# how the cluster differ
+plot_features(def_feat$features, result$category_prob)
+```
 
 
 

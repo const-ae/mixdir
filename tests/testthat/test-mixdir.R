@@ -81,7 +81,7 @@ test_that("mixdir can handle missing values as category", {
   X <- create_data()
   set.seed(1)
   X[sample(seq_along(X), 3, replace=FALSE)] <- NA
-  result <- mixdir(X, n_latent=10, select_latent = TRUE, na.handle = "category")
+  result <- mixdir(X, n_latent=10, select_latent = TRUE, na_handle = "category")
   expect_true(result$converged)
   assigned_cluster <- result$pred_class
   # Expect that ind 2 and 7 (CCC) are in the same cluster
@@ -178,6 +178,21 @@ test_that("finding the most typical answers works", {
   data("mushroom")
   res <- mixdir(mushroom[1:30, ], beta=1)
   find_typical_features(res, top_n=3)
+})
+
+
+test_that("finding the defining answers works", {
+  data("mushroom")
+  res <- mixdir(mushroom[1:30, ], beta=1)
+  def_feats <- find_defining_features(res, mushroom[1:30, ])
+  expect_equal(length(def_feats$quality), ncol(mushroom))
+  expect_equal(length(def_feats$features), ncol(mushroom))
+
+  def_feats2 <- find_defining_features(res, mushroom[1:30, ], n_features = 2)
+  expect_equal(length(def_feats2$quality), 1)
+  expect_equal(length(def_feats2$features), 2)
+
+  expect_equal(def_feats2$quality, def_feats$quality[3])
 })
 
 

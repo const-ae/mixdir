@@ -30,5 +30,5 @@ Find the top predictive features and values for each latent class
 
 }
 \seealso{
-find_typical_features
+\code{\link{find_typical_features}} \code{\link{find_defining_features}}
 }
