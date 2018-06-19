@@ -10,6 +10,7 @@ Description: Scalable Bayesian clustering of categorical datasets. The package i
     infer an appropriate number of latent classes or find k classes, as defined by the user.  The model is based on a
     paper by Dunson and Xing (2009) <doi:10.1198/jasa.2009.tm08439>, but implements a scalable variational inference algorithm so that it is
     applicable to large datasets.
+URL: https://github.com/const-ae/mixdir
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
