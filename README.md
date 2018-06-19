@@ -15,6 +15,9 @@ Installation
 ------------
 
 ``` r
+install.packages("mixdir")
+
+# Or to get the latest version from github
 devtools::install_github("const-ae/mixdir")
 ```
 
@@ -166,10 +169,3 @@ The package implements a variational inference algorithm to solve a Bayesian lat
 <img src="man/figures/README_plots/equations_model.png" align="center" style="height: 150px" >
 
 ![](man/figures/README_plots/model_plate_notation.png)
-
-------------------------------------------------------------------------
-
-Disclaimer
-==========
-
-This package is still under development and can still change profoundly.
