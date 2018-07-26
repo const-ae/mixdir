@@ -8,9 +8,10 @@
 }
 \arguments{
 \item{object}{the result from a call to \code{mixdir()}. It needs to have the
-fields lambda and category_prob. lambda is a vector of probabilities for each category.
+fields lambda, category_prob and na_handle. lambda is a vector of probabilities for each category.
 category_prob a list of a list of a named vector with probabilities
-for each feature, latent class and possible category.}
+for each feature, latent class and possible category. na_handle must either be
+"ignore" or "category" depending how NA's should be handled.}
 
 \item{newdata}{a named vector with a single new observation or a data.frame
 with the same structure as the original data used for fitting the model.

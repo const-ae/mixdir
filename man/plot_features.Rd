@@ -14,7 +14,7 @@ plot_features(features, category_prob,
 list of the probability of each answer for every class. It
 is usually obtained from the result of a call to \code{mixdir()}.}
 
-\item{classes}{which latent classes are plotted. By default all.}
+\item{classes}{numerical vector specifying which latent classes are plotted. By default all.}
 }
 \description{
 Plot cluster distribution for a subset of features features

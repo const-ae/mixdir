@@ -3,9 +3,10 @@
 #' Predict the class of a new observation.
 #'
 #' @param object the result from a call to \code{mixdir()}. It needs to have the
-#'   fields lambda and category_prob. lambda is a vector of probabilities for each category.
+#'   fields lambda, category_prob and na_handle. lambda is a vector of probabilities for each category.
 #'   category_prob a list of a list of a named vector with probabilities
-#'   for each feature, latent class and possible category.
+#'   for each feature, latent class and possible category. na_handle must either be
+#'   "ignore" or "category" depending how NA's should be handled.
 #' @param newdata a named vector with a single new observation or a data.frame
 #'   with the same structure as the original data used for fitting the model.
 #'   Missing features or features not encountered during training are replaced by
@@ -341,7 +342,7 @@ find_defining_features <- function(mixdir_obj, X,
 #' @param category_prob a list over all features containing a
 #'   list of the probability of each answer for every class. It
 #'   is usually obtained from the result of a call to \code{mixdir()}.
-#' @param classes which latent classes are plotted. By default all.
+#' @param classes numerical vector specifying which latent classes are plotted. By default all.
 #'
 #' @examples
 #'   data("mushroom")
