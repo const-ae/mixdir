@@ -68,11 +68,13 @@
 #'   res <- mixdir(mushroom[1:30, ])
 #'
 #' @references
-#'  1. Dunson, D. B. & Xing, C. Nonparametric Bayes Modeling of Multivariate Categorical Data. J. Am. Stat. Assoc. 104, 1042–1051 (2009).
+#'  1. C. Ahlmann-Eltze and C. Yau, "MixDir: Scalable Bayesian Clustering for High-Dimensional Categorical Data", 2018 IEEE 5th International Conference on Data Science and Advanced Analytics (DSAA), Turin, Italy, 2018, pp. 526-539.
 #'
-#'  2. Blei, D. M., Ng, A. Y. & Jordan, M. I. Latent Dirichlet Allocation. J. Macine Learn. Res. 3, 993–1022 (2003).
+#'  2. Dunson, D. B. and Xing, C. Nonparametric Bayes Modeling of Multivariate Categorical Data. J. Am. Stat. Assoc. 104, 1042–1051 (2009).
 #'
-#'  3. Blei, D. M. & Jordan, M. I. Variational inference for Dirichlet process mixtures. Bayesian Anal. 1, 121–144 (2006).
+#'  3. Blei, D. M., Ng, A. Y. and Jordan, M. I. Latent Dirichlet Allocation. J. Macine Learn. Res. 3, 993–1022 (2003).
+#'
+#'  4. Blei, D. M. and Jordan, M. I. Variational inference for Dirichlet process mixtures. Bayesian Anal. 1, 121–144 (2006).
 #' @export
 mixdir <- function(X,
                    n_latent=3,

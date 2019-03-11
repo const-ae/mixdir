@@ -1,0 +1,17 @@
+citHeader("To cite mixdir in publications use:")
+
+
+citEntry(entry = "InProceedings",
+  title = "{MixDir}: Scalable Bayesian Clustering for High-Dimensional Categorical Data",
+  author = personList(as.person("Constantin Ahlmann-Eltze"),
+              as.person("Christopher Yau")),
+  booktitle= "2018 IEEE 5th International Conference on Data Science and Advanced Analytics (DSAA)",
+  year = "2018",
+  pages = "526--539",
+  doi = "10.1109/DSAA.2018.00068",
+  url = "http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8631438&isnumber=8631391",
+  textVersion = paste("C. Ahlmann-Eltze and C. Yau,",
+      "\"MixDir: Scalable Bayesian Clustering for High-Dimensional Categorical Data\",",
+      "2018 IEEE 5th International Conference on Data Science and Advanced Analytics (DSAA),",
+      "Turin, Italy, 2018, pp. 526-539.")
+)
