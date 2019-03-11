@@ -256,10 +256,12 @@ find_typical_features <- function(mixdir_obj, top_n=10){
 #' @seealso \code{\link{find_predictive_features}} \code{\link{find_typical_features}}
 #'
 #' @examples
+#'   \donttest{
 #'   data("mushroom")
 #'   res <- mixdir(mushroom[1:100, ], n_latent=20)
 #'   find_defining_features(res, mushroom[1:100, ], n_features=3)
 #'   find_defining_features(res, mushroom[1:100, ], n_features=Inf)
+#'   }
 #' @export
 find_defining_features <- function(mixdir_obj, X,
                                   n_features=Inf, measure=c("JS", "ARI"),
@@ -345,15 +347,16 @@ find_defining_features <- function(mixdir_obj, X,
 #' @param classes numerical vector specifying which latent classes are plotted. By default all.
 #'
 #' @examples
-#'   data("mushroom")
-#'   res <- mixdir(mushroom[1:100, ], n_latent=4)
-#'   plot_features(c("bruises", "edible"), res$category_prob)
+#'   \donttest{
+#'     data("mushroom")
+#'     res <- mixdir(mushroom[1:100, ], n_latent=4)
+#'     plot_features(c("bruises", "edible"), res$category_prob)
 #'
-#'   res2 <- mixdir(mushroom[1:100, ], n_latent=20)
-#'   def_feats <- find_defining_features(res2, mushroom[1:100, ], n_features=Inf)
-#'   plot_features(def_feats$features[1:6], category_prob = res2$category_prob,
-#'                classes=which(res$lambda > 0.01))
-#
+#'     res2 <- mixdir(mushroom[1:100, ], n_latent=20)
+#'     def_feats <- find_defining_features(res2, mushroom[1:100, ], n_features=Inf)
+#'     plot_features(def_feats$features[1:6], category_prob = res2$category_prob,
+#'                   classes=which(res$lambda > 0.01))
+#'    }
 #' @export
 plot_features <- function(features, category_prob,
                                    classes=seq_len(length(category_prob[[1]]))){

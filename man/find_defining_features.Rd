@@ -4,9 +4,9 @@
 \alias{find_defining_features}
 \title{Find the n defining features}
 \usage{
-find_defining_features(mixdir_obj, X, n_features = Inf, measure = c("JS",
-  "ARI"), subsample_size = Inf, step_size = Inf, exponential_decay = TRUE,
-  verbose = FALSE)
+find_defining_features(mixdir_obj, X, n_features = Inf,
+  measure = c("JS", "ARI"), subsample_size = Inf, step_size = Inf,
+  exponential_decay = TRUE, verbose = FALSE)
 }
 \arguments{
 \item{mixdir_obj}{the result from a call to \code{mixdir()}. It needs to have the
@@ -65,10 +65,12 @@ Iteratively find the variable, whose removal least affects the
   should only be used as a guidance to see where there are jumps in the quality.
 }
 \examples{
+  \donttest{
   data("mushroom")
   res <- mixdir(mushroom[1:100, ], n_latent=20)
   find_defining_features(res, mushroom[1:100, ], n_features=3)
   find_defining_features(res, mushroom[1:100, ], n_features=Inf)
+  }
 }
 \seealso{
 \code{\link{find_predictive_features}} \code{\link{find_typical_features}}
