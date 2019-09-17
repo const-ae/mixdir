@@ -106,6 +106,14 @@ test_that("mixdir repetitions selects the best run", {
 })
 
 
+test_that("mixdir fails gracefully with too many columns", {
+  data_set <- generate_categorical_dataset(n_ind = 50, n_quest = 1e3, n_cat = 2, n_true_classes = 2)
+  set.seed(1)
+  expect_error(mixdir(data_set$X, n_latent=2, select_latent = FALSE))
+  expect_error(mixdir(data_set$X, n_latent=2, select_latent = TRUE))
+})
+
+
 
 
 context("Prediction")

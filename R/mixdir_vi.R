@@ -74,6 +74,11 @@ mixdir_vi <- function(X, n_latent, alpha, beta, categories, max_iter, epsilon,
     #   })
     # }
     zeta <- update_zeta_cpp(zeta, X, phia, omega, n_ind, n_quest, n_latent, n_cat)
+    if(any(rowSums(zeta) == 0)){
+      stop(paste0("There was an underflow in the calculation of zeta. Cannot continue.\n",
+                  "The problem probably came from the large number of columns in the input ",
+                  "data (", (ncol(X)), "). Is it possible that you want to work on t(X)?"))
+    }
     zeta <- zeta / rowSums(zeta)
 
     # Update phi
