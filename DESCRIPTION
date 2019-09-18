@@ -1,9 +1,11 @@
 Package: mixdir
 Type: Package
 Title: Cluster High Dimensional Categorical Datasets
-Version: 0.2.0
-Authors@R: c(person("Constantin", "Ahlmann-Eltze", email = "artjom31415@googlemail.com", role = c("aut", "cre")),
-             person("Christopher", "Yau", email="c.yau@bham.ac.uk", role="ths"))
+Version: 0.3.0
+Authors@R: c(person("Constantin", "Ahlmann-Eltze", email = "artjom31415@googlemail.com", role = c("aut", "cre"),
+                    comment = c(ORCID = "0000-0002-3762-068X")),
+             person("Christopher", "Yau", email="c.yau@bham.ac.uk", role="ths",
+                    comment = c(ORCID = "0000-0001-7615-8523")))
 Description: Scalable Bayesian clustering of categorical datasets. The package implements a hierarchical Dirichlet 
     (Process) mixture  of multinomial distributions. It is thus a probabilistic latent class model (LCM) and can be used
     to reduce the  dimensionality of hierarchical data and cluster individuals into latent classes. It can automatically
