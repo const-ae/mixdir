@@ -1,3 +1,9 @@
+# mixdir 0.3.0
+
+* Improve error message if underflow in zeta calculation (#1).
+  Thanks to @jmelero611.
+
+
 # mixdir 0.2.0
 
 * Adding reference to accompanying publication

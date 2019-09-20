@@ -1,7 +1,7 @@
 
 ## Test enviroments
-* local ubuntu 18.04 with R 3.5.2
-* rhub (Windows Server R-devel, Ubuntu 16.04 R-release, Fedora R-devel and Debian R-devel)
+* local MacOS Mojave, R 3.6.1
+* rhub (Windows Server R-devel)
 
 ## R CMD check results
 There were no ERRORS or WARNINGS.
