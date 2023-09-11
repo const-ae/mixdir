@@ -11,7 +11,7 @@ It can
 -   cluster datasets with more than 70,000 observations and 60 features
 -   propagate uncertainty and produce a soft clustering
 
-A detailed description of the algorithm and the features of the package can be found in the the accompanying [paper](http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8631438&isnumber=8631391). If you find the package useful please cite
+A detailed description of the algorithm and the features of the package can be found in the the accompanying [paper](https://doi.org/10.1109/DSAA.2018.00068). If you find the package useful please cite
 
 > C. Ahlmann-Eltze and C. Yau, "MixDir: Scalable Bayesian Clustering for High-Dimensional Categorical Data", 2018 IEEE 5th International Conference on Data Science and Advanced Analytics (DSAA), Turin, Italy, 2018, pp. 526-539.
 
